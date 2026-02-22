@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Styles the <h2>Login</h2> */
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Styles your form as the white card container */
+        form {
+            background: rgb(253, 253, 253);
+            padding: 30px;
+            width: 320px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Targets your email and password inputs */
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Styles the .forgot div you have in the HTML */
+        .forgot {
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .forgot a {
+            font-size: 13px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        /* Styles the .remember div you have in the HTML */
+        .remember {
+            margin-top: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .remember label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Targets the <button> inside your form */
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Styles the Register link outside the form */
+        a[th\:href*="register"], a[href*="register"] {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+            color: #28a745;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Styles for the error and success messages */
+        div[style*="color:red"], div[style*="color:green"] {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+
+</head>
+<body>
+
+<h2>Login</h2>
+
+<div th:if="${param.error}" style="color:red;">
+    Invalid credentials OR Email not verified
+</div>
+
+<div th:if="${param.verified}" style="color:green;">
+    Email verified successfully! Please login.
+</div>
+
+<form th:action="@{/login}" method="post">
+    <input type="email" name="email" placeholder="Email" required><br><br>
+    <input type="password" name="password" placeholder="Password" required><br><br>
+
+    <div class="forgot">
+        <a href="forgot.html">Forgot Password?</a>
+    </div>
+
+    <div class="remember">
+        <input type="checkbox" id="remember" name="remember">
+        <label for="remember">Remember Me</label>
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+<a th:href="@{/register}">Register</a>
+
+</body>
+</html>

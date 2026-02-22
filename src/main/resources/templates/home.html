@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Campus Connect – Home</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+        }
+
+        /* ===== TOP BAR ===== */
+        .topbar {
+            background: #ffffff;
+            padding: 14px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .topbar .left {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .topbar .right a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .topbar .right a:hover {
+            color: #1e3c72;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        /* ===== CARDS ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .event { background: #e8f0ff; color: #2962ff; }
+        .announcement { background: #e7f7ee; color: #2e7d32; }
+        .complaint { background: #fff1e6; color: #e65100; }
+        .emergency { background: #ffeaea; color: #c62828; }
+
+        .card h3 {
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        @media(max-width:900px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== PROFILE POPUP ===== */
+        .profile-popup {
+            position: fixed;
+            top: 70px;
+            right: 30px;
+            background: #fff;
+            width: 230px;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 999;
+        }
+
+        .profile-popup p {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .profile-popup form button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            border: none;
+            border-radius: 10px;
+            background: #1e3c72;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .profile-popup form button:hover {
+            background: #2a5298;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+    <div class="left">🏠 Home</div>
+
+    <div class="right">
+        <a href="#" id="profileLink"
+           >Profile</a>
+
+        <!-- Spring Security Logout -->
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit"
+                    style="background:none;border:none;color:#333;font-weight:500;cursor:pointer;">
+                Logout
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ===== PROFILE POPUP ===== -->
+<div class="profile-popup" id="profilePopup">
+    <a th:href="@{/profile}" ><p><strong>Name:</strong> <span th:text="${user.firstName}"></span></p></a>
+    <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+    <h1>Campus Updates</h1>
+    <p class="subtitle">Events, announcements, complaints & campus alerts</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <span class="tag event">Event</span>
+            <h3>Tech Fest 🎉</h3>
+            <p>Share details about campus events and activities.</p>
+        </div>
+
+        <div class="card">
+            <span class="tag announcement">Announcement</span>
+            <h3>Official Notice</h3>
+            <p>Post academic or administrative announcements.</p>
+        </div>
+
+        <div class="card">
+            <span class="tag complaint">Complaint</span>
+            <h3>Issue Report</h3>
+            <p>Report cleanliness, facilities, or other problems.</p>
+        </div>
+
+        <div class="card">
+            <span class="tag emergency">Emergency</span>
+            <h3>Emergency Alert</h3>
+            <p>Urgent updates that need immediate attention.</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.getElementById("profileLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        const popup = document.getElementById("profilePopup");
+        popup.style.display = popup.style.display === "block" ? "none" : "block";
+    });
+
+    document.addEventListener("click", function (e) {
+        const popup = document.getElementById("profilePopup");
+        const profileLink = document.getElementById("profileLink");
+        if (!popup.contains(e.target) && !profileLink.contains(e.target)) {
+            popup.style.display = "none";
+        }
+    });
+</script>
+
+</body>
+</html>
