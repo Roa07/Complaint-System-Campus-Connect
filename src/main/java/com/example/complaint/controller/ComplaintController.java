@@ -37,11 +37,19 @@ public class ComplaintController {
 
         User user = userRepo.findByEmail(principal.getName()).get();
 
-        complaint.setStatus("PENDING");
+//        complaint.setStatus("PENDING");
         complaint.setUser(user);
 
         complaintRepo.save(complaint);
 
         return "redirect:/dashboard";
     }
+
+    @PostMapping("/deleteComplaint/{id}")
+    public String deleteComplaint(@PathVariable Long id) {
+        complaintRepo.deleteById(id);
+        return "redirect:/home";
+    }
 }
+
+

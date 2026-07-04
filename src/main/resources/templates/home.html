@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Campus Connect – Home</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -16,6 +20,7 @@
 
         body {
             background: #f4f6f9;
+            color: #333;
         }
 
         /* ===== TOP BAR ===== */
@@ -26,6 +31,9 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .topbar .left {
@@ -34,19 +42,27 @@
             color: #1e3c72;
         }
 
-        .topbar .right a {
+        .topbar .right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar .right a, .topbar .right button {
             margin-left: 20px;
             text-decoration: none;
             color: #333;
             font-size: 14px;
             font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
 
-        .topbar .right a:hover {
+        .topbar .right a:hover, .topbar .right button:hover {
             color: #1e3c72;
         }
 
-        /* ===== MAIN ===== */
+        /* ===== MAIN CONTAINER ===== */
         .main {
             max-width: 1200px;
             margin: 30px auto;
@@ -63,32 +79,43 @@
             margin-bottom: 25px;
         }
 
-        /* ===== CARDS ===== */
-        .cards {
+        /* ===== GRID SYSTEM ===== */
+        .cards-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
 
+        /* Card Styling */
         .card {
             background: #fff;
             border-radius: 14px;
             padding: 20px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            cursor: pointer;
             transition: 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
             transform: translateY(-6px);
         }
 
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
         .tag {
             display: inline-block;
             padding: 4px 10px;
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
             border-radius: 20px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            width: fit-content;
         }
 
         .event { background: #e8f0ff; color: #2962ff; }
@@ -104,10 +131,29 @@
         .card p {
             font-size: 14px;
             color: #555;
+            line-height: 1.5;
+        }
+
+        .card img {
+            margin-top: 15px;
+            border-radius: 8px;
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+        }
+
+        /* Action Buttons Area (Likes & Delete) */
+        .card-actions {
+            margin-top: auto;
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
         }
 
         @media(max-width:900px) {
-            .cards {
+            .cards-container {
                 grid-template-columns: 1fr;
             }
         }
@@ -118,8 +164,8 @@
             top: 70px;
             right: 30px;
             background: #fff;
-            width: 230px;
-            padding: 15px;
+            width: 250px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             display: none;
@@ -127,22 +173,31 @@
         }
 
         .profile-popup p {
-            font-size: 13px;
-            margin-bottom: 6px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
         }
 
-        .profile-popup form button {
+        .profile-popup a {
+            text-decoration: none;
+            color: #1e3c72;
+            font-weight: 600;
+        }
+
+        .profile-popup button {
             width: 100%;
-            margin-top: 10px;
-            padding: 8px;
+            margin-top: 15px;
+            padding: 10px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             background: #1e3c72;
             color: #fff;
+            font-weight: 500;
             cursor: pointer;
         }
 
-        .profile-popup form button:hover {
+        .profile-popup button:hover {
             background: #2a5298;
         }
     </style>
@@ -150,82 +205,168 @@
 
 <body>
 
-<!-- ===== TOP BAR ===== -->
 <div class="topbar">
-    <div class="left">🏠 Home</div>
+    <div class="left">🏠 Campus Connect</div>
 
     <div class="right">
-        <a href="#" id="profileLink"
-           >Profile</a>
+        <span id="currentUserEmail"  sec:authentication = "name" style="display:none;"></span>
 
-        <!-- Spring Security Logout -->
+        <a href="javascript:void(0)" id="profileLink">My Profile</a>
+
         <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit"
-                    style="background:none;border:none;color:#333;font-weight:500;cursor:pointer;">
-                Logout
-            </button>
+            <button type="submit">Logout</button>
         </form>
     </div>
 </div>
 
-<!-- ===== PROFILE POPUP ===== -->
 <div class="profile-popup" id="profilePopup">
-    <a th:href="@{/profile}" ><p><strong>Name:</strong> <span th:text="${user.firstName}"></span></p></a>
-    <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${user.firstName}">Student</span></p>
+    <p><strong>Role:</strong> <span th:text="${user.role}">User</span></p>
+
+    <a th:href="@{/profile}">Edit Profile Settings</a>
 
     <form th:action="@{/logout}" method="post">
-        <button type="submit">Logout</button>
+        <button type="submit">Log Out</button>
     </form>
 </div>
 
-<!-- ===== MAIN ===== -->
 <div class="main">
     <h1>Campus Updates</h1>
-    <p class="subtitle">Events, announcements, complaints & campus alerts</p>
+    <p class="subtitle">Stay informed with the latest events and reports</p>
 
-    <div class="cards">
+    <div class="cards-container">
 
         <div class="card">
             <span class="tag event">Event</span>
-            <h3>Tech Fest 🎉</h3>
-            <p>Share details about campus events and activities.</p>
+            <h3>Tech Fest 2026 🎉</h3>
+            <p>Registration for the annual hackathon is now open. Join us for 48 hours of building!</p>
         </div>
 
         <div class="card">
-            <span class="tag announcement">Announcement</span>
-            <h3>Official Notice</h3>
-            <p>Post academic or administrative announcements.</p>
+            <span class="tag announcement">Notice</span>
+            <h3>Library Hours</h3>
+            <p>The central library will remain open 24/7 during the upcoming final examination week.</p>
         </div>
 
-        <div class="card">
-            <span class="tag complaint">Complaint</span>
-            <h3>Issue Report</h3>
-            <p>Report cleanliness, facilities, or other problems.</p>
-        </div>
+        <a th:href="@{/home2}" class="card-link">
+            <div class="card">
+                <span class="tag complaint">Action Required</span>
+                <h3>Report an Issue</h3>
+                <p>Click here to report facility damage, cleanliness issues, or security concerns.</p>
+            </div>
+        </a>
 
         <div class="card">
             <span class="tag emergency">Emergency</span>
-            <h3>Emergency Alert</h3>
-            <p>Urgent updates that need immediate attention.</p>
+            <h3>Weather Alert</h3>
+            <p>Heavy rainfall expected. Evening classes moved to online mode for today.</p>
         </div>
 
+    </div> <hr style="margin: 30px 0; border: 0; border-top: 2px solid #ddd;">
+    <h2>Recent Reports</h2>
+    <br>
+
+    <div class="cards-container" id="dynamicComplaintsContainer">
     </div>
+
 </div>
 
 <script>
-    document.getElementById("profileLink").addEventListener("click", function (e) {
-        e.preventDefault();
-        const popup = document.getElementById("profilePopup");
-        popup.style.display = popup.style.display === "block" ? "none" : "block";
+    // --- 1. POPUP LOGIC ---
+    const profileLink = document.getElementById("profileLink");
+    const profilePopup = document.getElementById("profilePopup");
+
+    profileLink.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const isVisible = profilePopup.style.display === "block";
+        profilePopup.style.display = isVisible ? "none" : "block";
     });
 
     document.addEventListener("click", function (e) {
-        const popup = document.getElementById("profilePopup");
-        const profileLink = document.getElementById("profileLink");
-        if (!popup.contains(e.target) && !profileLink.contains(e.target)) {
-            popup.style.display = "none";
+        if (!profilePopup.contains(e.target) && e.target !== profileLink) {
+            profilePopup.style.display = "none";
         }
     });
+
+    // --- 2. AJAX COMPLAINT LOADING LOGIC ---
+    const currentUserEmail = document.getElementById("currentUserEmail").textContent.trim();
+
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+    // --- LOAD COMPLAINTS ---
+    async function loadComplaints() {
+        try {
+            const response = await fetch('/api/complaints');
+            const complaints = await response.json();
+
+            const container = document.getElementById("dynamicComplaintsContainer");
+            container.innerHTML = ""; // Clear existing cards
+
+            complaints.forEach(c => {
+                // Ensure image string isn't null or empty before rendering
+                const imgHTML = (c.image && c.image.trim() !== "")
+                    ? `<img src="/uploads/complaints/${c.image}" alt="Report Image">`
+                    : '';
+
+                // Count likes safely (Assuming your API returns a 'likes' array)
+                const likeCount = c.likes ? c.likes.length : 0;
+
+                // Only render delete button if the logged-in user is the owner
+                const ownerEmail = c.user ? c.user.email : '';
+                const deleteBtnHTML = (ownerEmail === currentUserEmail)
+                    ? `
+                         <button onclick="deleteComplaint(${c.id})"
+                                    style="background: #ffeaea; color: #c62828; border: 1px solid #c62828; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                                     🗑️ Delete
+                         </button>
+      `
+                    : '';
+
+                // Build the complete card
+                container.innerHTML += `
+                <div class="card">
+                    <span class="tag complaint">User Report</span>
+                    <h3>${c.location}</h3>
+                    <p>${c.description}</p>
+                    ${imgHTML}
+
+                    <div class="card-actions">
+                        <span style="font-size: 14px; font-weight: 500;">❤️ ${likeCount} Likes</span>
+                        ${deleteBtnHTML}
+                    </div>
+                </div>
+                `;
+            });
+        } catch (error) {
+            console.error("Error loading complaints:", error);
+        }
+    }
+
+    async function deleteComplaint(id) {
+        if (!confirm("Are you sure you want to delete this report?")) return;
+
+        try {
+            const response = await fetch(`/complaints/${id}/delete`, {
+                method: 'POST',
+                headers: {
+                    [csrfHeader]: csrfToken
+                }
+            });
+
+            if (response.ok) {
+                loadComplaints(); // reload list
+            } else {
+                alert("Delete failed!");
+            }
+        } catch (error) {
+            console.error("Error deleting complaint:", error);
+        }
+    // Load immediately on page load, then refresh every 5 seconds
+    window.onload = loadComplaints;
+    setInterval(loadComplaints, 5000);
+    }
+
 </script>
 
 </body>

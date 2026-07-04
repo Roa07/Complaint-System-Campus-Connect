@@ -1,83 +1,124 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>My Profile</title>
+    <title>Profile</title>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             background: #f4f6f9;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 40px;
         }
 
         .profile-card {
             background: white;
-            width: 400px;
+            width: 420px;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .info {
-            margin-bottom: 15px;
-        }
-
-        .label {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .value {
-            margin-top: 4px;
-            color: #555;
-        }
-
-        .back-btn {
-            margin-top: 20px;
+        .profile-img {
             display: block;
-            text-align: center;
+            margin: auto;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #007bff;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
             padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
             background: #007bff;
             color: white;
-            border-radius: 6px;
-            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        .back-btn:hover {
-            background: #0056b3;
+        button:hover {
+            opacity: 0.9;
         }
+
+        .success { color: green; }
+        .error { color: red; }
+
+        hr { margin: 25px 0; }
     </style>
 </head>
 <body>
 
 <div class="profile-card">
-    <h2>My Profile</h2>
 
-    <div class="info">
-        <div class="label">User ID</div>
-        <div class="value" th:text="${user.id}"></div>
+    <h2 style="text-align:center;">Profile</h2>
+
+    <!-- SUCCESS -->
+    <div th:if="${param.updated}" class="success">
+        Profile updated successfully
     </div>
 
-    <div class="info">
-        <div class="label">Email</div>
-        <div class="value" th:text="${user.email}"></div>
+    <div th:if="${param.passwordChanged}" class="success">
+        Password changed successfully
     </div>
 
-    <div class="info">
-        <div class="label">Role</div>
-        <div class="value" th:text="${user.role}"></div>
+    <div th:if="${error}" class="error">
+        <span th:text="${error}"></span>
     </div>
 
-    <a th:href="@{/home}" class="back-btn">Back to Home</a>
+    <!-- PROFILE IMAGE -->
+    <img th:if="${user.profileImage != null}"
+         th:src="@{'/uploads/profile/' + ${user.profileImage}}"
+         class="profile-img">
+
+    <br><br>
+
+    <!-- EDIT PROFILE FORM -->
+    <form th:action="@{/profile/update}"
+          th:object="${user}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <input type="text" th:field="*{firstName}" placeholder="First Name" required>
+        <input type="text" th:field="*{middleName}" placeholder="Middle Name">
+        <input type="text" th:field="*{lastName}" placeholder="Last Name" required>
+        <input type="email" th:field="*{email}" placeholder="Email" required>
+
+        <input type="file" name="image">
+
+        <button type="submit">Update Profile</button>
+    </form>
+
+    <hr>
+
+    <!-- CHANGE PASSWORD -->
+    <h3>Change Password</h3>
+
+    <form th:action="@{/profile/change-password}" method="post">
+
+        <input type="password" name="oldPassword" placeholder="Old Password" required>
+        <input type="password" name="newPassword" placeholder="New Password" required>
+        <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+
+        <button type="submit">Change Password</button>
+    </form>
+
+    <br>
+    <a th:href="@{/logout}">Logout</a>
+
 </div>
 
 </body>

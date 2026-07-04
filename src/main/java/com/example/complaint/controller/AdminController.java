@@ -19,6 +19,6 @@ public class AdminController {
         model.addAttribute("complaints",
                 complaintRepo.findAll());
 
-        return "admin";
+        return "Admin/home";
     }
 }

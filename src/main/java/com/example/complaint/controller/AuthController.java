@@ -85,4 +85,51 @@ public class AuthController {
     public String login(){
         return "login";
     }
+
+    @GetMapping("/forgot")
+    public String forgotPage(){
+        return "forgot";
+    }
+
+    @PostMapping("/forgot")
+    public String processForgot(@RequestParam String email, Model model) {
+        System.out.println("DEBUG: Reached /forgot endpoint for email: " + email);
+        
+        // 1. Check if user exists
+        if(userRepo.findByEmail(email).isEmpty()) {
+            System.out.println("DEBUG: Email not found in database.");
+            model.addAttribute("error", "Email is not registered.");
+            return "forgot";
+        }
+        
+        // 2. Generate and Send OTP
+        try {
+            System.out.println("DEBUG: Attempting to generate and send OTP...");
+            otpService.generateAndSendOtp(email);
+            System.out.println("DEBUG: OTP sent successfully. Redirecting to verify page.");
+            // 3. Redirect to verify-forgot page
+            return "redirect:/verify-forgot?email=" + email;
+        } catch (Exception e) {
+            System.out.println("ERROR: Failed to send OTP. Exception: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Failed to send email. Please check SMTP configuration.");
+            return "forgot";
+        }
+    }
+
+    @GetMapping("/verify-forgot")
+    public String verifyForgotPage(@RequestParam String email, Model model) {
+        model.addAttribute("email", email);
+        return "verify-forgot";
+    }
+
+    @PostMapping("/verify-forgot")
+    public String processVerifyForgot(@RequestParam String email, @RequestParam String otp) {
+        if(otpService.validateOtp(email, otp)) {
+            // OTP is correct, move to the Reset Password page
+            return "redirect:/reset-password?email=" + email;
+        }
+        // OTP is incorrect or expired
+        return "redirect:/verify-forgot?email=" + email + "&error";
+    }
 }

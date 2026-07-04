@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Campus Connect – Post Complaint</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .form-box {
+            width: 500px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1e3c72;
+        }
+
+        label {
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #1e3c72;
+            box-shadow: 0 0 5px rgba(30,60,114,0.3);
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        /* Validation */
+        .error {
+            border: 1px solid red;
+        }
+
+        .error-text {
+            color: red;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .submit-btn {
+            background: #1e3c72;
+            color: #fff;
+        }
+
+        .submit-btn:hover {
+            background: #2a5298;
+        }
+
+        .reset-btn {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        /* Image Preview */
+        #preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* Spinner */
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .spinner div {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ccc;
+            border-top: 4px solid #1e3c72;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Animation */
+        .success-message {
+            text-align: center;
+            color: green;
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="form-box">
+
+    <h2>Post Complaint</h2>
+
+    <div class="success-message" id="successMsg">
+        ✅ Complaint posted successfully!
+    </div>
+
+    <form th:action="@{/submit}"
+          method="post"
+          enctype="multipart/form-data"
+          onsubmit="return validateForm()">
+
+        <label>Description</label>
+        <textarea name="description" id="description" required></textarea>
+        <div class="error-text" id="descError"></div>
+
+        <label>Location</label>
+        <select name="location" id="location" required>
+            <option value="">Select Location</option>
+            <option>Library</option>
+            <option>Canteen</option>
+            <option>Auditorium</option>
+            <option>Hostel</option>
+        </select>
+        <div class="error-text" id="locError"></div>
+
+        <label>Block Name</label>
+        <input type="text" name="blockName">
+
+        <label>Upload Photo</label>
+        <input type="file" name="image" id="imageInput" accept="image/*">
+
+        <img id="preview">
+
+        <div class="btn-group">
+            <button type="submit" class="submit-btn">Post</button>
+            <button type="reset" class="reset-btn">Cancel</button>
+        </div>
+
+    </form>
+
+    <div class="spinner" id="spinner">
+        <div></div>
+    </div>
+
+</div>
+
+<script>
+
+    // Image Preview
+    document.getElementById("imageInput").addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById("preview");
+
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        }
+    });
+
+    // Validation
+    function validateForm() {
+
+        let valid = true;
+
+        const desc = document.getElementById("description");
+        const loc = document.getElementById("location");
+
+        document.getElementById("descError").innerText = "";
+        document.getElementById("locError").innerText = "";
+
+        if (desc.value.trim().length < 10) {
+            desc.classList.add("error");
+            document.getElementById("descError").innerText =
+                "Description must be at least 10 characters.";
+            valid = false;
+        } else {
+            desc.classList.remove("error");
+        }
+
+        if (loc.value === "") {
+            loc.classList.add("error");
+            document.getElementById("locError").innerText =
+                "Please select a location.";
+            valid = false;
+        } else {
+            loc.classList.remove("error");
+        }
+
+        if (valid) {
+            document.getElementById("spinner").style.display = "block";
+        }
+
+        return valid;
+    }
+
+    // Show success message if redirected
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success')) {
+        document.getElementById("successMsg").style.display = "block";
+    }
+
+</script>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Forgot Password</title>
+    <title>Verify OTP</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,7 +21,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        input[type="email"] {
+        input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -36,35 +36,23 @@
             margin-top: 20px;
             border: none;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #28a745;
             color: white;
             cursor: pointer;
             font-size: 14px;
             font-weight: bold;
         }
-        a {
-            display: block;
-            margin-top: 15px;
-            text-align: center;
-            color: #007bff;
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
-
-<h2>Forgot Password</h2>
-
-<div th:if="${error}" style="color:red; margin-bottom:10px;" th:text="${error}"></div>
-
-<form th:action="@{/forgot}" method="post">
-    <label>Enter your registered email</label>
-    <input type="email" name="email" required><br>
-
-    <button type="submit">Send OTP</button>
-</form>
-
-<a th:href="@{/login}">Back to Login</a>
-
+    <h2>Enter OTP</h2>
+    <div th:if="${param.error}" style="color:red; margin-bottom: 10px;">Invalid or Expired OTP. Please try again.</div>
+    <form th:action="@{/verify-forgot}" method="post">
+        <!-- Hidden field to keep track of the email -->
+        <input type="hidden" name="email" th:value="${email}">
+        <label>Enter 6-digit OTP:</label>
+        <input type="text" name="otp" required><br>
+        <button type="submit">Verify OTP</button>
+    </form>
 </body>
 </html>

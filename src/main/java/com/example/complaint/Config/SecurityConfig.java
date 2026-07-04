@@ -1,4 +1,4 @@
-package com.example.complaint.config;
+package com.example.complaint.Config;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,12 +22,14 @@ public class SecurityConfig {
                         // 1. Publicly accessible pages
                         .requestMatchers("/register", "/login", "/verify", "/forgot", "/reset", "/css/**", "/js/**").permitAll()
 
-
+                        .requestMatchers("/home2").authenticated()
                         .requestMatchers("/profile").authenticated()
                         // 2. Role-based access control (PUT THEM HERE)
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/dashboard").authenticated()
                         .requestMatchers("/teacher/**").hasRole("TEACHER")
                         .requestMatchers("/student/**").hasRole("STUDENT")
+                        .requestMatchers("/home").authenticated()
 
                         // 3. Everything else requires login
                         .anyRequest().authenticated()
@@ -38,6 +40,7 @@ public class SecurityConfig {
                                 .passwordParameter("password")
 //                        .defaultSuccessUrl("/dashboard", true)
                         .defaultSuccessUrl("/home", true)
+                                .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
