@@ -1,5 +1,7 @@
 package com.example.complaint.service;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.complaint.entity.OtpToken;
 import com.example.complaint.repository.OtpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,11 @@ public class OtpService {
     @Autowired
     private EmailService emailService;
 
+    @Transactional
     public void generateAndSendOtp(String email) throws Exception {
+
+        // Delete any existing OTP tokens for this email to prevent NonUniqueResultException
+        otpRepo.deleteByEmail(email);
 
         String otp = String.valueOf(new Random().nextInt(900000) + 100000);
 

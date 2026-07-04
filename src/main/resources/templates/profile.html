@@ -1,125 +1,178 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Profile</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Campus Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial;
-            background: #f4f6f9;
-            display: flex;
-            justify-content: center;
-            padding: 40px;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #f4f7fe; color: #2b3674; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+
+        .profile-container {
+            width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px;
         }
 
-        .profile-card {
-            background: white;
-            width: 420px;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        .profile-img {
-            display: block;
-            margin: auto;
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #007bff;
+        /* Left Side: Avatar */
+        .avatar-section { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .avatar-wrapper { position: relative; width: 150px; height: 150px; margin-bottom: 20px; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .camera-btn {
+            position: absolute; bottom: 5px; right: 5px; background: #4318FF; color: #fff;
+            width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; border: 2px solid #fff; transition: 0.3s;
+        }
+        .camera-btn:hover { background: #3311cc; }
+        #fileInput { display: none; }
+        
+        .role-badge {
+            background: #e8f0ff; color: #4318FF; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 10px; display: inline-block;
         }
 
-        input {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+        /* Right Side: Forms */
+        .panel-header { margin-bottom: 25px; border-bottom: 2px solid #f4f7fe; padding-bottom: 10px; }
+        .panel-header h2 { font-size: 22px; font-weight: 700; color: #11047A; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: #a3aed1; margin-bottom: 8px; }
+        .form-group input {
+            width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #e0e5f2;
+            background: #fdfdfd; font-size: 14px; color: #2b3674; outline: none; transition: 0.3s;
         }
+        .form-group input:focus { border-color: #4318FF; box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1); }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 6px;
-            background: #007bff;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .btn-primary {
+            background: #4318FF; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px;
+            font-weight: 600; border: none; cursor: pointer; transition: 0.3s; width: 100%;
         }
+        .btn-primary:hover { background: #3311cc; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(67, 24, 255, 0.3); }
 
-        button:hover {
-            opacity: 0.9;
+        .alert { padding: 12px 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 500; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .alert-danger { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+        .back-link { display: block; margin-top: 20px; text-align: center; text-decoration: none; color: #4318FF; font-weight: 500; font-size: 14px; }
+        .back-link:hover { text-decoration: underline; }
+
+        @media(max-width: 768px) {
+            .profile-container { grid-template-columns: 1fr; }
+            .row { grid-template-columns: 1fr; }
         }
-
-        .success { color: green; }
-        .error { color: red; }
-
-        hr { margin: 25px 0; }
     </style>
 </head>
 <body>
 
-<div class="profile-card">
+    <div class="profile-container">
+        
+        <!-- Avatar Panel -->
+        <div class="glass-panel avatar-section">
+            <div class="avatar-wrapper">
+                <img th:if="${user.profileImage != null}" th:src="@{'/uploads/profile/' + ${user.profileImage}}" class="avatar-img" alt="Profile">
+                <img th:unless="${user.profileImage != null}" src="https://ui-avatars.com/api/?name=User&background=4318FF&color=fff&size=150" class="avatar-img" id="previewImg" alt="Profile">
+                <div class="camera-btn" onclick="document.getElementById('fileInput').click();">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+            </div>
+            
+            <h3 th:text="${user.firstName + ' ' + user.lastName}" style="font-size: 20px; font-weight: 700; color: #11047A;">John Doe</h3>
+            <p th:text="${user.email}" style="font-size: 14px; color: #a3aed1; margin-bottom: 5px;">john@example.com</p>
+            <span class="role-badge" th:text="${user.role}">ROLE_STUDENT</span>
+            
+            <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
 
-    <h2 style="text-align:center;">Profile</h2>
+        <!-- Forms Panel -->
+        <div>
+            <!-- Update Profile Form -->
+            <div class="glass-panel" style="margin-bottom: 20px;">
+                <div class="panel-header">
+                    <h2>Edit Profile</h2>
+                </div>
+                
+                <div th:if="${param.updated}" class="alert alert-success"><i class="fa-solid fa-check-circle"></i> Profile updated successfully!</div>
+                <div th:if="${error}" class="alert alert-danger"><i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}"></span></div>
 
-    <!-- SUCCESS -->
-    <div th:if="${param.updated}" class="success">
-        Profile updated successfully
+                <form th:action="@{/profile/update}" th:object="${user}" method="post" enctype="multipart/form-data">
+                    <input type="file" name="image" id="fileInput" onchange="previewFile()">
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" th:field="*{firstName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" th:field="*{lastName}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Middle Name (Optional)</label>
+                        <input type="text" th:field="*{middleName}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" th:field="*{email}" readonly style="background: #f4f7fe; color: #a3aed1; cursor: not-allowed;">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Change Password Form -->
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2>Change Password</h2>
+                </div>
+
+                <div th:if="${param.passwordChanged}" class="alert alert-success"><i class="fa-solid fa-check-circle"></i> Password changed successfully!</div>
+
+                <form th:action="@{/profile/change-password}" method="post">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" name="oldPassword" required>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" name="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" name="confirmPassword" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" style="background: #11047A;">Update Password</button>
+                </form>
+            </div>
+        </div>
+        
     </div>
 
-    <div th:if="${param.passwordChanged}" class="success">
-        Password changed successfully
-    </div>
+    <script>
+        function previewFile() {
+            const preview = document.getElementById('previewImg');
+            const file = document.querySelector('input[type=file]').files[0];
+            const reader = new FileReader();
 
-    <div th:if="${error}" class="error">
-        <span th:text="${error}"></span>
-    </div>
+            reader.addEventListener("load", function () {
+                preview.src = reader.result;
+            }, false);
 
-    <!-- PROFILE IMAGE -->
-    <img th:if="${user.profileImage != null}"
-         th:src="@{'/uploads/profile/' + ${user.profileImage}}"
-         class="profile-img">
-
-    <br><br>
-
-    <!-- EDIT PROFILE FORM -->
-    <form th:action="@{/profile/update}"
-          th:object="${user}"
-          method="post"
-          enctype="multipart/form-data">
-
-        <input type="text" th:field="*{firstName}" placeholder="First Name" required>
-        <input type="text" th:field="*{middleName}" placeholder="Middle Name">
-        <input type="text" th:field="*{lastName}" placeholder="Last Name" required>
-        <input type="email" th:field="*{email}" placeholder="Email" required>
-
-        <input type="file" name="image">
-
-        <button type="submit">Update Profile</button>
-    </form>
-
-    <hr>
-
-    <!-- CHANGE PASSWORD -->
-    <h3>Change Password</h3>
-
-    <form th:action="@{/profile/change-password}" method="post">
-
-        <input type="password" name="oldPassword" placeholder="Old Password" required>
-        <input type="password" name="newPassword" placeholder="New Password" required>
-        <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
-
-        <button type="submit">Change Password</button>
-    </form>
-
-    <br>
-    <a th:href="@{/logout}">Logout</a>
-
-</div>
-
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 </body>
 </html>

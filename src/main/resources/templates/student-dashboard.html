@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Campus Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #f4f7fe; color: #2b3674; display: flex; overflow-x: hidden; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px; background: #fff; height: 100vh; position: fixed;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05); padding: 30px 20px;
+            display: flex; flex-direction: column; z-index: 100;
+        }
+        .logo { font-size: 24px; font-weight: 700; color: #11047A; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+        .nav-links { list-style: none; flex: 1; }
+        .nav-links li { margin-bottom: 10px; }
+        .nav-links a {
+            display: flex; align-items: center; gap: 15px; padding: 12px 15px;
+            color: #a3aed1; text-decoration: none; font-weight: 500;
+            border-radius: 10px; transition: 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active { background: #4318FF; color: #fff; }
+        .nav-links a i { font-size: 18px; }
+        
+        .logout-btn {
+            background: #ffe5e5; color: #ff3b3b; padding: 12px; border-radius: 10px;
+            text-align: center; font-weight: 600; border: none; cursor: pointer;
+            width: 100%; transition: 0.3s; margin-top: auto;
+        }
+        .logout-btn:hover { background: #ff3b3b; color: #fff; }
+
+        /* Main Content */
+        .main-content { flex: 1; margin-left: 260px; padding: 30px 40px; }
+
+        /* Topbar */
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .topbar h1 { font-size: 34px; font-weight: 700; }
+        .topbar .search-profile { display: flex; align-items: center; gap: 20px; }
+        
+        .profile { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        .profile img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .profile-info h4 { font-size: 14px; font-weight: 600; }
+        .profile-info p { font-size: 12px; color: #a3aed1; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-header h2 { font-size: 20px; font-weight: 700; }
+
+        .btn-primary {
+            background: #4318FF; color: #fff; padding: 10px 20px; border-radius: 10px;
+            text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .btn-primary:hover { background: #3311cc; }
+
+        /* Table */
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f4f7fe; }
+        th { color: #a3aed1; font-weight: 500; font-size: 14px; }
+        td { font-size: 14px; font-weight: 500; color: #2b3674; }
+        
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-pending { background: #fff8e1; color: #ffb300; }
+        .badge-approved { background: #e8f5e9; color: #4caf50; }
+        .badge-rejected { background: #ffebee; color: #f44336; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            Student
+        </div>
+        <ul class="nav-links">
+            <li><a href="/student/dashboard" class="active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="/home2"><i class="fa-solid fa-plus-circle"></i> New Complaint</a></li>
+            <li><a href="#"><i class="fa-solid fa-bell"></i> Notifications</a></li>
+            <li><a href="/profile"><i class="fa-solid fa-user"></i> Profile</a></li>
+        </ul>
+        
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+        </form>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <h1>My Dashboard</h1>
+            <div class="search-profile">
+                <div class="profile">
+                    <img src="https://ui-avatars.com/api/?name=Student&background=4318FF&color=fff" alt="Profile">
+                    <div class="profile-info">
+                        <h4 th:text="${user != null ? user.firstName : 'Student'}">Student Name</h4>
+                        <p>Student</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel" style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #4318FF, #8E2DE2); color: #fff;">
+            <div>
+                <h2 style="font-size: 24px; margin-bottom: 5px;">Need to report an issue?</h2>
+                <p style="font-size: 14px; opacity: 0.9;">Help us keep the campus safe and clean by reporting issues promptly.</p>
+            </div>
+            <a href="/home2" class="btn-primary" style="background: #fff; color: #4318FF;">Register Complaint</a>
+        </div>
+
+        <div class="glass-panel">
+            <div class="panel-header">
+                <h2>My Complaint History</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="complaint : ${complaints}">
+                            <td th:text="'#' + ${complaint.id}">#102</td>
+                            <td th:text="${complaint.description}">Broken Projector</td>
+                            <td th:text="${complaint.location}">Room 101</td>
+                            <td th:text="${complaint.createdAt != null ? #temporals.format(complaint.createdAt, 'dd MMM yyyy') : 'Unknown Date'}">10 Oct 2026</td>
+                            <td>
+                                <span th:if="${complaint.status != null and complaint.status.name() == 'PENDING'}" class="status-badge badge-pending">Pending</span>
+                                <span th:if="${complaint.status != null and complaint.status.name() == 'APPROVED'}" class="status-badge badge-approved">Approved</span>
+                                <span th:if="${complaint.status != null and complaint.status.name() == 'REJECTED'}" class="status-badge badge-rejected">Rejected</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(complaints)}">
+                            <td colspan="5" style="text-align: center; padding: 30px; color: #a3aed1;">No complaints registered yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

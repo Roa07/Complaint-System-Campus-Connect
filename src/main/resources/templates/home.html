@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Campus Connect – Home</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -291,9 +289,6 @@
     // --- 2. AJAX COMPLAINT LOADING LOGIC ---
     const currentUserEmail = document.getElementById("currentUserEmail").textContent.trim();
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
     // --- LOAD COMPLAINTS ---
     async function loadComplaints() {
         try {
@@ -348,10 +343,7 @@
 
         try {
             const response = await fetch(`/complaints/${id}/delete`, {
-                method: 'POST',
-                headers: {
-                    [csrfHeader]: csrfToken
-                }
+                method: 'POST'
             });
 
             if (response.ok) {

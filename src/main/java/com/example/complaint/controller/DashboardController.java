@@ -42,6 +42,22 @@ public class DashboardController {
     }
 
     // 5. GET Mapping for Home Page
+    @GetMapping("/")
+    public String rootRedirect(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName().equals("anonymousUser")) {
+            return "redirect:/login";
+        }
+        
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+        if (role.equals("ROLE_ADMIN")) {
+            return "redirect:/admin/dashboard";
+        } else if (role.equals("ROLE_TEACHER")) {
+            return "redirect:/teacher/dashboard";
+        } else {
+            return "redirect:/student/dashboard";
+        }
+    }
+
     @GetMapping("/home")
     public String home(Model model, Authentication authentication) {
         // NOTE: Ensure your findByEmail matches the return type here (Optional vs User)
@@ -68,10 +84,26 @@ public class DashboardController {
     public String submit(Authentication authentication, Model model) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
-
         model.addAttribute("user", user);
-
         return "home2";
+    }
+
+    @GetMapping("/complaint")
+    public String complaintPage(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+        model.addAttribute("user", user);
+        return "complaint";
+    }
+
+    @GetMapping("/emergency")
+    public String emergencyPage() {
+        return "emergence";
+    }
+
+    @GetMapping("/fest")
+    public String festPage() {
+        return "fest";
     }
 
     // 7. POST Mapping for Processing the Complaint & Image
@@ -151,61 +183,4 @@ public class DashboardController {
         return "redirect:/home";
     }
 
-    @PostMapping("/admin/approve/{id}")
-    public String approveComplaint(@PathVariable Long id) {
-
-        Complaint complaint = complaintRepository.findById(id).orElseThrow();
-
-        complaint.setStatus(ComplaintStatus.APPROVED);
-
-        complaintRepository.save(complaint);
-
-        return "redirect:/admin/dashboard";
-    }
-
-    @PostMapping("/admin/reject/{id}")
-    public String rejectComplaint(@PathVariable Long id) {
-
-        Complaint complaint = complaintRepository.findById(id).orElseThrow();
-
-        complaint.setStatus(ComplaintStatus.REJECTED);
-
-        complaintRepository.save(complaint);
-
-        return "redirect:/admin/dashboard";
-    }
-    @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication) {
-
-        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-
-        if (user.getRole().equals("ROLE_ADMIN")) {
-            return "redirect:/admin/dashboard";
-        }
-
-        return "redirect:/user/dashboard";
-    }
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard(Model model) {
-
-        List<Complaint> complaints = complaintRepository.findAll();
-
-        model.addAttribute("complaints", complaints);
-
-        return "admin-dashboard";
-    }
-
-    @GetMapping("/user/dashboard")
-    public String userDashboard(Model model,
-                                Authentication authentication) {
-
-        User user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-
-        List<Complaint> complaints =
-                complaintRepository.findByUser(user);
-
-        model.addAttribute("complaints", complaints);
-
-        return "user-dashboard";
-    }
 }
