@@ -30,9 +30,30 @@ public class Complaint {
     @JoinColumn(name="user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name="assigned_teacher_id")
+    private User assignedTeacher;
+
+    private String category;
+    private String priority;
+    private LocalDateTime dueDate;
+    private String resolutionNotes;
+    private String feedback;
+
     @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL)
     private List<ComplaintLike> likes;
+
+    @PrePersist
+    @PreUpdate
+    private void ensureDefaults() {
+        if (status == null) {
+            status = ComplaintStatus.PENDING;
+        }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }

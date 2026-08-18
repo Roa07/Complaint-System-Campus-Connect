@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HOD Dashboard</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'dashboard', 'HOD Dashboard', 'HOD Dashboard')}">
+    <main>
+        <!-- Stats widgets -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-person-workspace fs-4"></i></div>
+                        <div>
+                            <h6 class="text-muted mb-1 small fw-semibold">Faculty</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${totalTeachers}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-mortarboard-fill fs-4"></i></div>
+                        <div>
+                            <h6 class="text-muted mb-1 small fw-semibold">Students</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${totalStudents}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-journal-bookmark fs-4"></i></div>
+                        <div>
+                            <h6 class="text-muted mb-1 small fw-semibold">Subjects</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${totalSubjects}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-3">
+                <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-qr-code fs-4"></i></div>
+                        <div>
+                            <h6 class="text-muted mb-1 small fw-semibold">Active QR</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${activeQrSessions}">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <h5 class="fw-bold text-dark mb-3">Quick Actions</h5>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/hod/timetable" class="btn btn-primary rounded-3"><i class="bi bi-calendar-plus"></i> Manage Timetable</a>
+                <a href="/hod/syllabus" class="btn btn-outline-primary rounded-3"><i class="bi bi-file-earmark-arrow-up"></i> Manage Syllabus</a>
+                <a href="/attendance/generate" class="btn btn-outline-success rounded-3"><i class="bi bi-qr-code-scan"></i> Generate QR Code</a>
+                <a href="/hod/attendance" class="btn btn-outline-info rounded-3"><i class="bi bi-eye"></i> View Attendance</a>
+                <a href="/hod/reports" class="btn btn-outline-secondary rounded-3"><i class="bi bi-bar-chart-line"></i> View Reports</a>
+            </div>
+        </div>
+
+        <!-- AI Predictions Alert Box -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 text-white mb-4" style="background: linear-gradient(135deg, #ba1a1a, #ff7b7b);" th:if="${not #lists.isEmpty(deptPredictions)}">
+            <h5 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill"></i> AI Syllabus Risk Alert</h5>
+            <div th:each="pred : ${deptPredictions}" class="small mb-1">
+                <span class="fw-semibold text-white-50" th:text="${pred.teacher.displayName}">Teacher</span> is running <span class="fw-semibold text-white" th:text="${pred.predictedDelayDays}">5</span> days behind schedule for <span class="fw-semibold" th:text="${pred.subject}">Subject</span>. Recommended: <span th:text="${pred.recoveryPlan}">action</span>
+            </div>
+        </div>
+
+        <!-- Today's scheduled lectures list -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <h5 class="fw-bold text-dark mb-3">Today's Lectures</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Lecture No.</th>
+                            <th>Time</th>
+                            <th>Subject</th>
+                            <th>Teacher</th>
+                            <th>Class & Div</th>
+                            <th>Room</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="l : ${todayLectures}">
+                            <td th:text="${l.lectureNumber}">1</td>
+                            <td th:text="${l.startTime} + ' - ' + ${l.endTime}">10:00 - 11:00</td>
+                            <td th:text="${l.subject}">AI</td>
+                            <td th:text="${l.teacher.displayName}">Amit</td>
+                            <td th:text="${l.course} + ' - ' + ${l.division}">MSc IMCA - A</td>
+                            <td th:text="${l.classroom}">204</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(todayLectures)}">
+                            <td colspan="6" class="text-center text-muted py-3">No lectures scheduled for today.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Syllabus monitoring table -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <h5 class="fw-bold text-dark mb-4">Syllabus Monitoring</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Faculty</th>
+                            <th>Subject</th>
+                            <th>Unit Topic</th>
+                            <th>Progress %</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="plan : ${deptSyllabusPlans}">
+                            <td th:text="${plan.teacher.displayName}">Prof. Sarah</td>
+                            <td th:text="${plan.subject}">Compiler Design</td>
+                            <td th:text="${plan.unitName} + ': ' + ${plan.topic}">Unit 1: Introduction</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' + ${plan.progressPercentage} + '%'"></div>
+                                    </div>
+                                    <span class="small fw-semibold" th:text="${plan.progressPercentage} + '%'">72%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" th:classappend="${plan.status == 'Completed' ? 'bg-success' : plan.status == 'Delayed' ? 'bg-danger' : 'bg-warning'}" th:text="${plan.status}">On Track</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(deptSyllabusPlans)}">
+                            <td colspan="5" class="text-center text-muted py-4">No teaching modules/syllabus plans uploaded yet in department.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HOD Profile</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'profile', 'HOD Profile', 'Profile')}">
+    <main>
+        <div th:if="${param.updated}" class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> HOD Profile updated successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row g-4">
+            <!-- Profile Info card -->
+            <div class="col-12 col-md-5">
+                <div class="card shadow-sm border-0 rounded-4 p-4 bg-white text-center">
+                    <div class="position-relative d-inline-block mx-auto mb-3" style="width: 140px; height: 140px;">
+                        <img th:if="${hod.profileImage != null}" th:src="@{'/uploads/profile/' + ${hod.profileImage}}" class="rounded-circle border border-3 border-white shadow-sm w-100 h-100 object-cover" alt="Profile">
+                        <div th:unless="${hod.profileImage != null}" class="profile-initials rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-1 mx-auto" style="width: 140px; height: 140px;" th:text="${hod.getInitials()}">HD</div>
+                    </div>
+                    
+                    <h4 class="fw-bold mb-1 text-dark" th:text="${hod.displayName}">Dr. Amit Sharma</h4>
+                    <p class="text-primary fw-semibold mb-3" th:text="'HOD — ' + ${hod.department}">HOD — Computer Science</p>
+                    
+                    <hr class="my-3">
+                    
+                    <div class="d-flex justify-content-around text-center mt-3">
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark" th:text="${teachersCount}">0</h5>
+                            <small class="text-muted">Teachers</small>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark" th:text="${studentsCount}">0</h5>
+                            <small class="text-muted">Students</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 mt-4">
+                        <button class="btn btn-primary rounded-3 w-100" data-bs-toggle="modal" data-bs-target="#editProfileModal"><i class="bi bi-pencil-square"></i> Edit Profile</button>
+                        <a href="/hod/settings" class="btn btn-outline-secondary rounded-3 w-100"><i class="bi bi-shield-lock"></i> Change Password</a>
+                        <button class="btn btn-outline-info rounded-3 w-100" data-bs-toggle="modal" data-bs-target="#editProfileModal"><i class="bi bi-telephone"></i> Update Mobile / Email</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Details card -->
+            <div class="col-12 col-md-7">
+                <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold text-dark mb-4"><i class="bi bi-info-circle text-primary me-2"></i> Account Details</h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Full Name</span>
+                            <strong class="text-dark fs-6" th:text="${hod.displayName}">Dr. Amit Sharma</strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Email Address</span>
+                            <strong class="text-dark fs-6" th:text="${hod.email}">amit.sharma@campus.edu</strong>
+                        </div>
+                        
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Mobile Number</span>
+                            <strong class="text-dark fs-6" th:text="${hod.phone != null ? hod.phone : 'N/A'}">9876543210</strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Employee ID</span>
+                            <strong class="text-dark fs-6" th:text="${hod.employeeId != null ? hod.employeeId : 'N/A'}">HOD001</strong>
+                        </div>
+                        
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Department</span>
+                            <strong class="text-dark fs-6" th:text="${hod.department}">Computer Science</strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Designation</span>
+                            <strong class="text-dark fs-6" th:text="${hod.designation != null ? hod.designation : 'HOD'}">Professor & Head</strong>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <span class="text-muted small d-block">Role Permissions</span>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 mt-1 small" th:text="${hod.role}">ROLE_HOD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold text-primary" id="editProfileModalLabel">Edit HOD Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form th:action="@{/hod/profile/update}" method="post">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">First Name *</label>
+                                <input type="text" class="form-control rounded-3" name="firstName" th:value="${hod.firstName}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">Middle Name (Optional)</label>
+                                <input type="text" class="form-control rounded-3" name="middleName" th:value="${hod.middleName}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">Last Name *</label>
+                                <input type="text" class="form-control rounded-3" name="lastName" th:value="${hod.lastName}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">Email Address *</label>
+                                <input type="email" class="form-control rounded-3" name="email" th:value="${hod.email}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">Mobile Number *</label>
+                                <input type="text" class="form-control rounded-3" name="phone" th:value="${hod.phone}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">Department *</label>
+                                <input type="text" class="form-control rounded-3" name="department" th:value="${hod.department}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">Designation</label>
+                                <input type="text" class="form-control rounded-3" name="designation" th:value="${hod.designation}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-semibold">Employee ID</label>
+                                <input type="text" class="form-control rounded-3" name="employeeId" th:value="${hod.employeeId}">
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary rounded-3 px-3">Save Updates</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

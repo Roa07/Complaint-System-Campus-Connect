@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics - Campus Connect</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f4f7fe;
+            font-family: 'Poppins', sans-serif;
+        }
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: #fff;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link {
+            color: #a3aed1;
+            font-weight: 500;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #4318FF;
+            color: #fff;
+        }
+        @media(max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar p-4 d-flex flex-column" id="sidebar">
+    <div class="d-flex align-items-center gap-2 mb-4 px-2">
+        <i class="bi bi-shield-fill-check fs-3 text-primary"></i>
+        <span class="fs-4 fw-bold text-primary">Admin</span>
+    </div>
+    <ul class="nav flex-column flex-grow-1">
+        <li class="nav-item">
+            <a href="/admin/dashboard" class="nav-link">
+                <i class="bi bi-pie-chart-fill"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/users" class="nav-link">
+                <i class="bi bi-people-fill"></i> Manage Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/assign" class="nav-link">
+                <i class="bi bi-person-check-fill"></i> Assign Complaints
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/reports" class="nav-link active">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i> Reports
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/profile" class="nav-link">
+                <i class="bi bi-person-fill"></i> Profile
+            </a>
+        </li>
+    </ul>
+    
+    <form th:action="@{/logout}" method="post" class="mt-auto">
+        <button type="submit" class="btn btn-outline-danger w-100 rounded-3 py-2 fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </form>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+    
+    <!-- Topbar -->
+    <header class="d-flex justify-content-between align-items-center mb-4 gap-3">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-light d-lg-none rounded-circle p-2 shadow-sm" id="menuToggle"><i class="bi bi-list fs-4"></i></button>
+            <h1 class="h3 fw-bold mb-0 text-primary">Reports & Analytics</h1>
+        </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-file-earmark-text fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Total Filed</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${totalComplaints}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-hourglass-split fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Pending</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${pendingCount}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-check-circle-fill fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Resolved</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${resolvedCount}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-x-circle-fill fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Rejected</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${rejectedCount}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-primary mb-3">Complaint Trends</h5>
+                <div style="height: 250px;">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-primary mb-3">Distribution by Status</h5>
+                <div style="height: 250px;">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports Table -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h5 class="fw-bold text-primary mb-0">Generated Report</h5>
+            <div class="d-flex gap-2">
+                <button class="btn btn-success rounded-3 px-3 d-flex align-items-center gap-2" onclick="exportExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Export Excel</button>
+                <button class="btn btn-outline-primary rounded-3 px-3 d-flex align-items-center gap-2" onclick="window.print()"><i class="bi bi-printer"></i> Print / PDF</button>
+            </div>
+        </div>
+
+        <div class="mb-3" style="max-width: 300px;">
+            <input type="text" class="form-control rounded-3" id="searchInput" placeholder="Search location..." onkeyup="filterReportTable()">
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="reportTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Location</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${complaints}">
+                        <td th:text="'#' + ${c.id}">#1</td>
+                        <td th:text="${c.user != null ? c.user.displayName : 'Deleted User'}">Student Name</td>
+                        <td th:text="${c.location}">Library</td>
+                        <td th:text="${c.description}">Description</td>
+                        <td>
+                            <span class="badge bg-secondary rounded-pill" th:text="${c.priority != null ? c.priority : 'Not Set'}">High</span>
+                        </td>
+                        <td>
+                            <span th:if="${c.status != null and c.status.name() == 'PENDING'}" class="badge bg-warning rounded-pill">Pending</span>
+                            <span th:if="${c.status != null and c.status.name() == 'APPROVED'}" class="badge bg-success rounded-pill">Approved</span>
+                            <span th:if="${c.status != null and c.status.name() == 'REJECTED'}" class="badge bg-danger rounded-pill">Rejected</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const pending = /*[[${pendingCount}]]*/ 10;
+            const resolved = /*[[${resolvedCount}]]*/ 45;
+            const rejected = /*[[${rejectedCount}]]*/ 5;
+
+            // Bar Chart
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Pending', 'Resolved', 'Rejected'],
+                    datasets: [{
+                        label: 'Complaints',
+                        data: [pending, resolved, rejected],
+                        backgroundColor: ['#ffb300', '#2ec771', '#dc3545'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Pie Chart
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Pending', 'Resolved', 'Rejected'],
+                    datasets: [{
+                        data: [pending, resolved, rejected],
+                        backgroundColor: ['#ffb300', '#2ec771', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    });
+
+    function filterReportTable() {
+        const input = document.getElementById("searchInput").value.toUpperCase();
+        const table = document.getElementById("reportTable");
+        const tr = table.getElementsByTagName("tr");
+        for (let i = 1; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName("td")[2];
+            if (td) {
+                const text = td.textContent || td.innerText;
+                tr[i].style.display = text.toUpperCase().indexOf(input) > -1 ? "" : "none";
+            }
+        }
+    }
+
+    function exportExcel() {
+        let csv = [];
+        const rows = document.querySelectorAll("table tr");
+        for (let i = 0; i < rows.length; i++) {
+            let row = [], cols = rows[i].querySelectorAll("td, th");
+            for (let j = 0; j < cols.length; j++) 
+                row.push('"' + cols[j].innerText + '"');
+            csv.push(row.join(","));
+        }
+        const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Campus_Connect_Report.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+    document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('active') && !sidebar.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

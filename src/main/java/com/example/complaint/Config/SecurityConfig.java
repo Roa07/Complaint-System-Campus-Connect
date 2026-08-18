@@ -31,6 +31,7 @@ public class SecurityConfig {
                         // 2. Role-based access control
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/teacher/**").hasRole("TEACHER")
+                        .requestMatchers("/hod/**").hasRole("HOD")
                         .requestMatchers("/student/**").hasAnyRole("STUDENT", "USER")
                         .requestMatchers("/home").authenticated()
                         .requestMatchers("/dashboard").authenticated()
@@ -49,6 +50,11 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
+                )
+                .rememberMe(remember -> remember
+                        .key("uniqueAndSecretSmartDiary")
+                        .tokenValiditySeconds(86400 * 30) // 30 Days validity
+                        .rememberMeParameter("remember-me")
                 );
 
         return http.build();

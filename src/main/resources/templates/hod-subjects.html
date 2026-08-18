@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Subjects</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'subjects', 'Department Subjects', 'Subjects')}">
+    <main>
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+            <h5 class="fw-bold text-dark mb-4">Mapped Subjects Overview</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Teacher Assigned</th>
+                            <th>Class & Sem</th>
+                            <th>Unit Topic</th>
+                            <th>Target Hours</th>
+                            <th>Progress %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${plans}">
+                            <td class="fw-semibold text-primary" th:text="${p.subject}">AI</td>
+                            <td th:text="${p.teacher.displayName}">Prof. Amit</td>
+                            <td th:text="${p.course} + ' Sem ' + ${p.semester}">MSc IMCA Sem 2</td>
+                            <td th:text="${p.unitName} + ': ' + ${p.topic}">Unit 1: Introduction</td>
+                            <td th:text="${p.totalTeachingHours} + ' Hours'">15 Hours</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' + ${p.progressPercentage} + '%'"></div>
+                                    </div>
+                                    <span class="small fw-semibold" th:text="${p.progressPercentage} + '%'">0%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(plans)}">
+                            <td colspan="6" class="text-center text-muted py-3">No subjects or syllabus mapping outlines registered yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

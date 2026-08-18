@@ -1,6 +1,8 @@
 body {
     margin: 0;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #243447;
 }
 
 .sidebar {
@@ -10,10 +12,12 @@ body {
     color: white;
     position: fixed;
     padding-top: 20px;
+    overflow-y: auto;
 }
 
 .sidebar h2 {
     text-align: center;
+    padding: 0 12px;
 }
 
 .sidebar a {
@@ -30,4 +34,38 @@ body {
 .content {
     margin-left: 220px;
     padding: 20px;
+    min-width: 0;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        padding: 14px;
+        box-sizing: border-box;
+    }
+
+    .sidebar h2 {
+        margin: 0 0 12px;
+        text-align: left;
+    }
+
+    .sidebar a {
+        display: inline-block;
+        margin: 4px;
+        border-radius: 8px;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 420px) {
+    .sidebar a {
+        display: block;
+        margin: 4px 0;
+    }
 }

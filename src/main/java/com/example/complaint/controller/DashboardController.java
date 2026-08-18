@@ -53,6 +53,8 @@ public class DashboardController {
             return "redirect:/admin/dashboard";
         } else if (role.equals("ROLE_TEACHER")) {
             return "redirect:/teacher/dashboard";
+        } else if (role.equals("ROLE_HOD")) {
+            return "redirect:/hod/dashboard";
         } else {
             return "redirect:/student/dashboard";
         }
@@ -60,6 +62,10 @@ public class DashboardController {
 
     @GetMapping("/home")
     public String home(Model model, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName().equals("anonymousUser")) {
+            return "redirect:/login";
+        }
+
         // NOTE: Ensure your findByEmail matches the return type here (Optional vs User)
         User user = userRepository.findByEmail(authentication.getName()).orElse(null);
 
@@ -106,6 +112,22 @@ public class DashboardController {
         return "fest";
     }
 
+    @GetMapping("/notifications")
+    public String notificationsPage(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+        model.addAttribute("user", user);
+        return "notifications";
+    }
+
+    @GetMapping("/settings")
+    public String settingsPage(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+        model.addAttribute("user", user);
+        return "settings";
+    }
+
     // 7. POST Mapping for Processing the Complaint & Image
     @PostMapping("/submit")
     public String postComplaint(
@@ -148,7 +170,9 @@ public class DashboardController {
         Complaint complaint = complaintRepository.findById(id).orElse(null);
 
         // Security check: Only delete if the logged-in user owns it
-        if (complaint != null && complaint.getUser().getEmail().equals(auth.getName())) {
+        if (complaint != null
+                && complaint.getUser() != null
+                && complaint.getUser().getEmail().equals(auth.getName())) {
             complaintRepository.delete(complaint);
         }
 

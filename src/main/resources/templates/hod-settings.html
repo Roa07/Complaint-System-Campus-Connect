@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HOD Settings</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'settings', 'HOD Settings', 'Settings')}">
+    <main>
+        <div th:if="${param.saved}" class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Settings saved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form th:action="@{/hod/settings/save}" method="post">
+            <div class="row g-4">
+                
+                <!-- 1. Account Settings Card -->
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-gear text-primary me-2"></i> Account Settings</h5>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">Update Email</label>
+                            <input type="email" class="form-control rounded-3" th:value="${hod.email}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">Update Mobile Number</label>
+                            <input type="text" class="form-control rounded-3" th:value="${hod.phone}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">Change Password</label>
+                            <input type="password" class="form-control rounded-3" placeholder="Enter new password">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Academic Settings Card -->
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-mortarboard text-success me-2"></i> Academic Mappings</h5>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">Default Department</label>
+                            <input type="text" class="form-control rounded-3" th:value="${hod.department}" readonly>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-muted small fw-semibold">Academic Year</label>
+                                <input type="text" class="form-control rounded-3" value="2026-2027">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-muted small fw-semibold">Semester</label>
+                                <input type="text" class="form-control rounded-3" value="Semester 2">
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-muted small fw-semibold">Default Class</label>
+                                <input type="text" class="form-control rounded-3" value="MSc IMCA">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-muted small fw-semibold">Default Division</label>
+                                <input type="text" class="form-control rounded-3" value="A">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Attendance Settings Card -->
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-qr-code text-info me-2"></i> Attendance Configurations</h5>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="qrSwitch" checked>
+                            <label class="form-check-label text-muted small fw-semibold" for="qrSwitch">Enable QR Attendance Engine</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">QR Validity Duration</label>
+                            <select class="form-select rounded-3">
+                                <option value="12">12 Hours (Default)</option>
+                                <option value="6">6 Hours</option>
+                                <option value="1">1 Hour</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Notification Settings Card -->
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-bell text-warning me-2"></i> Alerts & Subscriptions</h5>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="teacherAlerts" checked>
+                            <label class="form-check-label text-muted small" for="teacherAlerts">Receive Teacher Log Updates</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="studentAlerts" checked>
+                            <label class="form-check-label text-muted small" for="studentAlerts">Receive Student Complaint Alerts</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="delayAlerts" checked>
+                            <label class="form-check-label text-muted small" for="delayAlerts">Enable AI Syllabus Delay Warnings</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="timetableAlerts">
+                            <label class="form-check-label text-muted small" for="timetableAlerts">Notify Timetable Updates</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 text-end mt-4">
+                    <button type="submit" class="btn btn-primary rounded-3 px-4 py-2 fw-semibold">Save All Configurations</button>
+                </div>
+
+            </div>
+        </form>
+    </main>
+</div>
+
+</body>
+</html>

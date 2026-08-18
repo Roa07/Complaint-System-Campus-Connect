@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Departments</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'departments', 'Departments', 'Departments')}">
+    <main>
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+            <h5 class="fw-bold text-dark mb-3">Academic Departments</h5>
+            <p class="text-muted small">Manage organizational units and department-level preferences.</p>
+            <div class="table-responsive mt-3">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Department Code</th>
+                            <th>Department Name</th>
+                            <th>HOD Assigned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-semibold text-primary" th:text="${hod.department.substring(0, Math.min(hod.department.length(), 4)).toUpperCase()}">CS</td>
+                            <td th:text="${hod.department}">Computer Science</td>
+                            <td th:text="${hod.displayName}">Dr. Amit Sharma</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

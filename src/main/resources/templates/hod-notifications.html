@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HOD Notifications</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'notifications', 'Notifications', 'Notifications')}">
+    <main>
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h5 class="fw-bold text-dark mb-0">Recent Alerts</h5>
+                <button class="btn btn-sm btn-outline-secondary rounded-3 px-3" onclick="alert('All notifications marked as read!')">Mark all as read</button>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                <!-- Alert 1 -->
+                <div class="card border-0 rounded-3 p-3 bg-light border-start border-primary border-4 shadow-sm">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-info-circle-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold text-dark">New syllabus planning outline uploaded by Prof. Sarah</h6>
+                                <small class="text-muted">Today at 10:15 AM</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary rounded-3 px-3" onclick="this.closest('.card').classList.add('opacity-50')">Mark Read</button>
+                    </div>
+                </div>
+
+                <!-- Alert 2 -->
+                <div class="card border-0 rounded-3 p-3 bg-light border-start border-success border-4 shadow-sm">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-success bg-opacity-10 text-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold text-dark">Timetable entry update approved by faculty group</h6>
+                                <small class="text-muted">Yesterday at 4:30 PM</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary rounded-3 px-3" onclick="this.closest('.card').classList.add('opacity-50')">Mark Read</button>
+                    </div>
+                </div>
+
+                <!-- Alert 3 -->
+                <div class="card border-0 rounded-3 p-3 bg-light border-start border-warning border-4 shadow-sm">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold text-dark">AI Risk Alert: DBMS syllabus running 5 days behind schedule</h6>
+                                <small class="text-muted">3 days ago</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary rounded-3 px-3" onclick="this.closest('.card').classList.add('opacity-50')">Mark Read</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

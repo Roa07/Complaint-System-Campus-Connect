@@ -4,154 +4,317 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard - Campus Connect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #f4f7fe; color: #2b3674; display: flex; overflow-x: hidden; }
-
-        /* Sidebar */
+        body {
+            background-color: #f4f7fe;
+            font-family: 'Poppins', sans-serif;
+        }
         .sidebar {
-            width: 260px; background: #fff; height: 100vh; position: fixed;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.05); padding: 30px 20px;
-            display: flex; flex-direction: column; z-index: 100;
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: #fff;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
-        .logo { font-size: 24px; font-weight: 700; color: #11047A; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .nav-links { list-style: none; flex: 1; }
-        .nav-links li { margin-bottom: 10px; }
-        .nav-links a {
-            display: flex; align-items: center; gap: 15px; padding: 12px 15px;
-            color: #a3aed1; text-decoration: none; font-weight: 500;
-            border-radius: 10px; transition: 0.3s;
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+            transition: all 0.3s ease;
         }
-        .nav-links a:hover, .nav-links a.active { background: #4318FF; color: #fff; }
-        .nav-links a i { font-size: 18px; }
-        
-        .logout-btn {
-            background: #ffe5e5; color: #ff3b3b; padding: 12px; border-radius: 10px;
-            text-align: center; font-weight: 600; border: none; cursor: pointer;
-            width: 100%; transition: 0.3s; margin-top: auto;
+        .sidebar .nav-link {
+            color: #a3aed1;
+            font-weight: 500;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
         }
-        .logout-btn:hover { background: #ff3b3b; color: #fff; }
-
-        /* Main Content */
-        .main-content { flex: 1; margin-left: 260px; padding: 30px 40px; }
-
-        /* Topbar */
-        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .topbar h1 { font-size: 34px; font-weight: 700; }
-        .topbar .search-profile { display: flex; align-items: center; gap: 20px; }
-        
-        .profile { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .profile img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-        .profile-info h4 { font-size: 14px; font-weight: 600; }
-        .profile-info p { font-size: 12px; color: #a3aed1; }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            margin-bottom: 20px;
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #4318FF;
+            color: #fff;
         }
-
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .panel-header h2 { font-size: 20px; font-weight: 700; }
-
-        .btn-primary {
-            background: #4318FF; color: #fff; padding: 10px 20px; border-radius: 10px;
-            text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;
-            transition: 0.3s; border: none; cursor: pointer;
+        @media(max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
         }
-        .btn-primary:hover { background: #3311cc; }
-
-        /* Table */
-        .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f4f7fe; }
-        th { color: #a3aed1; font-weight: 500; font-size: 14px; }
-        td { font-size: 14px; font-weight: 500; color: #2b3674; }
-        
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .badge-pending { background: #fff8e1; color: #ffb300; }
-        .badge-approved { background: #e8f5e9; color: #4caf50; }
-        .badge-rejected { background: #ffebee; color: #f44336; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">
-            <i class="fa-solid fa-graduation-cap"></i>
-            Student
+<!-- Sidebar -->
+<aside class="sidebar p-4 d-flex flex-column" id="sidebar">
+    <div class="d-flex align-items-center gap-2 mb-4 px-2">
+        <i class="bi bi-mortarboard-fill fs-3 text-primary"></i>
+        <span class="fs-4 fw-bold text-primary">Student</span>
+    </div>
+    <ul class="nav flex-column flex-grow-1">
+        <li class="nav-item">
+            <a href="/student/dashboard" class="nav-link active">
+                <i class="bi bi-grid-fill"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/home2" class="nav-link text-muted">
+                <i class="bi bi-plus-circle-fill"></i> New Complaint
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/history" class="nav-link text-muted">
+                <i class="bi bi-clock-history"></i> History
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/profile" class="nav-link text-muted">
+                <i class="bi bi-person-fill"></i> Profile
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/settings" class="nav-link text-muted">
+                <i class="bi bi-gear-fill"></i> Settings
+            </a>
+        </li>
+    </ul>
+    
+    <form th:action="@{/logout}" method="post" class="mt-auto">
+        <button type="submit" class="btn btn-outline-danger w-100 rounded-3 py-2 fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </form>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+    
+    <!-- Topbar -->
+    <header class="d-flex justify-content-between align-items-center mb-4 gap-3">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-light d-lg-none rounded-circle p-2 shadow-sm" id="menuToggle"><i class="bi bi-list fs-4"></i></button>
+            <h1 class="h3 fw-bold mb-0 text-primary">My Dashboard</h1>
         </div>
-        <ul class="nav-links">
-            <li><a href="/student/dashboard" class="active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-            <li><a href="/home2"><i class="fa-solid fa-plus-circle"></i> New Complaint</a></li>
-            <li><a href="#"><i class="fa-solid fa-bell"></i> Notifications</a></li>
-            <li><a href="/profile"><i class="fa-solid fa-user"></i> Profile</a></li>
-        </ul>
-        
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
-        </form>
+        <div class="d-flex align-items-center gap-2">
+            <img src="https://ui-avatars.com/api/?name=Student&background=4318FF&color=fff" class="rounded-circle border border-2 border-white shadow-sm" style="width: 42px; height: 42px;" alt="Profile">
+            <div class="d-none d-sm-block text-start">
+                <h6 class="mb-0 fw-semibold text-dark" th:text="${user != null ? user.firstName : 'Student'}">Student Name</h6>
+                <small class="text-muted">Student</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- Welcome Banner -->
+    <div class="card border-0 rounded-4 shadow-sm p-4 text-white mb-4" style="background: linear-gradient(135deg, #4318FF, #8E2DE2);">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h4 class="fw-bold mb-1">Need to report an issue?</h4>
+                <p class="mb-0 text-white-50">Help us keep the campus safe and clean by reporting issues promptly.</p>
+            </div>
+            <a href="/home2" class="btn btn-light text-primary fw-semibold px-4 py-2 rounded-3">Register Complaint</a>
+        </div>
     </div>
 
-    <div class="main-content">
-        <div class="topbar">
-            <h1>My Dashboard</h1>
-            <div class="search-profile">
-                <div class="profile">
-                    <img src="https://ui-avatars.com/api/?name=Student&background=4318FF&color=fff" alt="Profile">
-                    <div class="profile-info">
-                        <h4 th:text="${user != null ? user.firstName : 'Student'}">Student Name</h4>
-                        <p>Student</p>
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-folder-fill fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small fw-semibold">Total Filed</h6>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${totalComplaints}">0</h3>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="glass-panel" style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #4318FF, #8E2DE2); color: #fff;">
-            <div>
-                <h2 style="font-size: 24px; margin-bottom: 5px;">Need to report an issue?</h2>
-                <p style="font-size: 14px; opacity: 0.9;">Help us keep the campus safe and clean by reporting issues promptly.</p>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-hourglass-split fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small fw-semibold">Pending</h6>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${pendingComplaints}">0</h3>
+                    </div>
+                </div>
             </div>
-            <a href="/home2" class="btn-primary" style="background: #fff; color: #4318FF;">Register Complaint</a>
         </div>
-
-        <div class="glass-panel">
-            <div class="panel-header">
-                <h2>My Complaint History</h2>
-            </div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Description</th>
-                            <th>Location</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="complaint : ${complaints}">
-                            <td th:text="'#' + ${complaint.id}">#102</td>
-                            <td th:text="${complaint.description}">Broken Projector</td>
-                            <td th:text="${complaint.location}">Room 101</td>
-                            <td th:text="${complaint.createdAt != null ? #temporals.format(complaint.createdAt, 'dd MMM yyyy') : 'Unknown Date'}">10 Oct 2026</td>
-                            <td>
-                                <span th:if="${complaint.status != null and complaint.status.name() == 'PENDING'}" class="status-badge badge-pending">Pending</span>
-                                <span th:if="${complaint.status != null and complaint.status.name() == 'APPROVED'}" class="status-badge badge-approved">Approved</span>
-                                <span th:if="${complaint.status != null and complaint.status.name() == 'REJECTED'}" class="status-badge badge-rejected">Rejected</span>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(complaints)}">
-                            <td colspan="5" style="text-align: center; padding: 30px; color: #a3aed1;">No complaints registered yet.</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-check-circle-fill fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small fw-semibold">Resolved</h6>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${resolvedComplaints}">0</h3>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Scan Attendance QR Section -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-qr-code-scan text-primary"></i> Scan Lecture Attendance QR</h5>
+        <p class="text-muted small">Enter the 12-hour validity attendance token shown on the teacher's screen to mark your attendance.</p>
+        <div class="input-group" style="max-width: 500px;">
+            <input type="text" class="form-control" id="qrTokenInput" placeholder="Enter attendance session token...">
+            <button class="btn btn-primary" onclick="submitAttendance()">Submit Attendance</button>
+        </div>
+        <div id="attendanceAlert" class="alert mt-3 d-none rounded-3 py-2"></div>
+    </div>
+
+    <!-- Today's Timetable Section -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar-event text-success"></i> Today's Timetable</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Lecture</th>
+                        <th>Time</th>
+                        <th>Subject</th>
+                        <th>Teacher</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="l : ${todayTimetable}">
+                        <td th:text="${l.lectureNumber}">1</td>
+                        <td th:text="${l.startTime} + ' - ' + ${l.endTime}">10:00 - 11:00</td>
+                        <td th:text="${l.subject}">Artificial Intelligence</td>
+                        <td th:text="${l.teacher.displayName}">Prof. Amit</td>
+                        <td th:text="${l.classroom}">Room 204</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(todayTimetable)}">
+                        <td colspan="5" class="text-center text-muted py-3">No lectures scheduled for today.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Weekly Timetable Section -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar3 text-info"></i> Weekly Timetable</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Day</th>
+                        <th>Lecture</th>
+                        <th>Time</th>
+                        <th>Subject</th>
+                        <th>Teacher</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="l : ${timetable}">
+                        <td th:text="${l.day}">Monday</td>
+                        <td th:text="${l.lectureNumber}">1</td>
+                        <td th:text="${l.startTime} + ' - ' + ${l.endTime}">10:00 - 11:00</td>
+                        <td th:text="${l.subject}">DBMS</td>
+                        <td th:text="${l.teacher.displayName}">Prof. Rahul</td>
+                        <td th:text="${l.classroom}">Room 205</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(timetable)}">
+                        <td colspan="6" class="text-center text-muted py-3">No weekly timetable configured yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- History Panel -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+        <div class="panel-header mb-4">
+            <h5 class="fw-bold text-primary mb-0">My Complaint History</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="complaint : ${complaints}">
+                        <td th:text="'#' + ${complaint.id}">#102</td>
+                        <td th:text="${complaint.description}">Broken Projector</td>
+                        <td th:text="${complaint.location}">Room 101</td>
+                        <td th:text="${complaint.createdAt != null ? #temporals.format(complaint.createdAt, 'dd MMM yyyy') : 'Unknown Date'}">10 Oct 2026</td>
+                        <td>
+                            <span th:if="${complaint.status != null and complaint.status.name() == 'PENDING'}" class="badge bg-warning rounded-pill">Pending</span>
+                            <span th:if="${complaint.status != null and complaint.status.name() == 'APPROVED'}" class="badge bg-success rounded-pill">Approved</span>
+                            <span th:if="${complaint.status != null and complaint.status.name() == 'REJECTED'}" class="badge bg-danger rounded-pill">Rejected</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(complaints)}">
+                        <td colspan="5" class="text-center text-muted py-4">No complaints registered yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    async function submitAttendance() {
+        const token = document.getElementById("qrTokenInput").value.trim();
+        const alertBox = document.getElementById("attendanceAlert");
+        if (!token) return;
+
+        alertBox.className = "alert mt-3 alert-info rounded-3 py-2";
+        alertBox.innerText = "Submitting attendance...";
+        alertBox.classList.remove("d-none");
+
+        try {
+            const response = await fetch(`/api/attendance/submit?token=${token}`, { method: 'POST' });
+            const data = await response.json();
+
+            if (response.ok) {
+                alertBox.className = "alert mt-3 alert-success rounded-3 py-2";
+                alertBox.innerText = data.message;
+            } else {
+                alertBox.className = "alert mt-3 alert-danger rounded-3 py-2";
+                alertBox.innerText = data.message || "Attendance submission failed.";
+            }
+        } catch(e) {
+            alertBox.className = "alert mt-3 alert-danger rounded-3 py-2";
+            alertBox.innerText = "Network error. Please try again.";
+        }
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+    document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('active') && !sidebar.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+</script>
 </body>
 </html>

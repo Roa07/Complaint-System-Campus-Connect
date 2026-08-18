@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HOD Syllabus Planning</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'syllabus', 'Syllabus Upload & Planning', 'Syllabus')}">
+    <main>
+        <!-- Alert triggers -->
+        <div th:if="${param.success}" class="alert alert-success rounded-3 py-2 text-center" role="alert">
+            Syllabus File Processed and Mapped Successfully!
+        </div>
+
+        <!-- Upload Syllabus Form -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-arrow-up text-primary"></i> Upload Subject Syllabus</h5>
+            <p class="text-muted small">Select a syllabus file to extract Units, Topics, Subtopics, and Teaching Hours.</p>
+            <form th:action="@{/hod/syllabus/upload}" method="post" enctype="multipart/form-data" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Subject Name</label>
+                    <input type="text" class="form-control rounded-3" name="subject" placeholder="e.g. Artificial Intelligence" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Assign Teacher</label>
+                    <select class="form-select rounded-3" name="teacherId" required>
+                        <option th:each="t : ${teachers}" th:value="${t.id}" th:text="${t.displayName}"></option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Course / Class</label>
+                    <input type="text" class="form-control rounded-3" name="course" placeholder="e.g. MSc IMCA" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Semester</label>
+                    <input type="text" class="form-control rounded-3" name="semester" placeholder="e.g. Semester 2" required>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label small fw-semibold text-muted">Syllabus File (PDF, DOCX, XLSX, CSV)</label>
+                    <input type="file" class="form-control rounded-3" name="file" accept=".pdf,.docx,.xlsx,.xls,.csv" required>
+                </div>
+
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary rounded-3 px-4">Upload and Parse</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Mapped Syllabus List -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+            <h5 class="fw-bold text-dark mb-3">Department Mapped Syllabus Plans</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Teacher</th>
+                            <th>Class & Sem</th>
+                            <th>Unit Topic</th>
+                            <th>Target Hours</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${plans}">
+                            <td th:text="${p.subject}">AI</td>
+                            <td th:text="${p.teacher.displayName}">Prof. Amit</td>
+                            <td th:text="${p.course} + ' Sem ' + ${p.semester}">MSc IMCA Sem 2</td>
+                            <td th:text="${p.unitName} + ': ' + ${p.topic}">Unit 1: Introduction</td>
+                            <td th:text="${p.totalTeachingHours} + ' Hours'">15 Hours</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px;">
+                                        <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' + ${p.progressPercentage} + '%'"></div>
+                                    </div>
+                                    <span class="small fw-semibold" th:text="${p.progressPercentage} + '%'">0%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(plans)}">
+                            <td colspan="6" class="text-center text-muted py-3">No syllabus outlines registered yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

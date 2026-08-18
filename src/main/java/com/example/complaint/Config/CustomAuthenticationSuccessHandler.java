@@ -31,6 +31,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             } else if (role.equals("ROLE_TEACHER")) {
                 redirectUrl = "/teacher/dashboard";
                 break;
+            } else if (role.equals("ROLE_HOD")) {
+                redirectUrl = "/hod/dashboard";
+                break;
             } else if (role.equals("ROLE_STUDENT") || role.equals("ROLE_USER")) {
                 // Fallback ROLE_USER to student dashboard as well
                 redirectUrl = "/student/dashboard";

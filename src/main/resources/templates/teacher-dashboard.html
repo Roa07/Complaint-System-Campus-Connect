@@ -4,132 +4,478 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard - Campus Connect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #f4f7fe; color: #2b3674; display: flex; overflow-x: hidden; }
-
-        /* Sidebar */
+        body {
+            background-color: #f4f7fe;
+            font-family: 'Poppins', sans-serif;
+        }
         .sidebar {
-            width: 260px; background: #fff; height: 100vh; position: fixed;
-            box-shadow: 4px 0 20px rgba(0,0,0,0.05); padding: 30px 20px;
-            display: flex; flex-direction: column; z-index: 100;
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: #fff;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
-        .logo { font-size: 24px; font-weight: 700; color: #11047A; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .nav-links { list-style: none; flex: 1; }
-        .nav-links li { margin-bottom: 10px; }
-        .nav-links a {
-            display: flex; align-items: center; gap: 15px; padding: 12px 15px;
-            color: #a3aed1; text-decoration: none; font-weight: 500;
-            border-radius: 10px; transition: 0.3s;
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+            transition: all 0.3s ease;
         }
-        .nav-links a:hover, .nav-links a.active { background: #4318FF; color: #fff; }
-        .nav-links a i { font-size: 18px; }
-        
-        .logout-btn {
-            background: #ffe5e5; color: #ff3b3b; padding: 12px; border-radius: 10px;
-            text-align: center; font-weight: 600; border: none; cursor: pointer;
-            width: 100%; transition: 0.3s; margin-top: auto;
+        .sidebar .nav-link {
+            color: #a3aed1;
+            font-weight: 500;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
         }
-        .logout-btn:hover { background: #ff3b3b; color: #fff; }
-
-        /* Main Content */
-        .main-content { flex: 1; margin-left: 260px; padding: 30px 40px; }
-
-        /* Topbar */
-        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .topbar h1 { font-size: 34px; font-weight: 700; }
-        .topbar .search-profile { display: flex; align-items: center; gap: 20px; }
-        
-        .profile { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .profile img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-        .profile-info h4 { font-size: 14px; font-weight: 600; }
-        .profile-info p { font-size: 12px; color: #a3aed1; }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #4318FF;
+            color: #fff;
         }
-
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .panel-header h2 { font-size: 20px; font-weight: 700; }
-
-        /* Table */
-        .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f4f7fe; }
-        th { color: #a3aed1; font-weight: 500; font-size: 14px; }
-        td { font-size: 14px; font-weight: 500; color: #2b3674; }
-        
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .badge-pending { background: #fff8e1; color: #ffb300; }
-        .badge-approved { background: #e8f5e9; color: #4caf50; }
-        .badge-rejected { background: #ffebee; color: #f44336; }
+        @media(max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">
-            <i class="fa-solid fa-chalkboard-user"></i>
-            Teacher
-        </div>
-        <ul class="nav-links">
-            <li><a href="/teacher/dashboard" class="active"><i class="fa-solid fa-list-check"></i> Assigned Tasks</a></li>
-            <li><a href="#"><i class="fa-solid fa-history"></i> History</a></li>
-            <li><a href="/profile"><i class="fa-solid fa-user"></i> Profile</a></li>
-        </ul>
-        
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
-        </form>
+<!-- Sidebar -->
+<aside class="sidebar p-4 d-flex flex-column" id="sidebar">
+    <div class="d-flex align-items-center gap-2 mb-4 px-2">
+        <i class="bi bi-person-badge-fill fs-3 text-primary"></i>
+        <span class="fs-4 fw-bold text-primary">Teacher</span>
     </div>
+    <ul class="nav flex-column flex-grow-1">
+        <li class="nav-item">
+            <a href="/teacher/dashboard" class="nav-link active">
+                <i class="bi bi-journal-check"></i> Digital Diary
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/attendance/generate" class="nav-link text-muted">
+                <i class="bi bi-qr-code"></i> Generate Attendance QR
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/teacher/attendance" class="nav-link text-muted">
+                <i class="bi bi-calendar-check-fill"></i> Attendance Monitor
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/history" class="nav-link text-muted">
+                <i class="bi bi-clock-history"></i> History
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/profile" class="nav-link text-muted">
+                <i class="bi bi-person-fill"></i> Profile
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/settings" class="nav-link text-muted">
+                <i class="bi bi-gear-fill"></i> Settings
+            </a>
+        </li>
+    </ul>
+    
+    <form th:action="@{/logout}" method="post" class="mt-auto">
+        <button type="submit" class="btn btn-outline-danger w-100 rounded-3 py-2 fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </form>
+</aside>
 
-    <div class="main-content">
-        <div class="topbar">
-            <h1>Teacher Dashboard</h1>
-            <div class="search-profile">
-                <div class="profile">
-                    <img src="https://ui-avatars.com/api/?name=Teacher&background=4318FF&color=fff" alt="Profile">
-                    <div class="profile-info">
-                        <h4 th:text="${user != null ? user.firstName : 'Teacher'}">Teacher Name</h4>
-                        <p>Faculty Member</p>
+<!-- Main Content -->
+<div class="main-content">
+    
+    <!-- Topbar -->
+    <header class="d-flex justify-content-between align-items-center mb-4 gap-3">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-light d-lg-none rounded-circle p-2 shadow-sm" id="menuToggle"><i class="bi bi-list fs-4"></i></button>
+            <h1 class="h3 fw-bold mb-0 text-primary">Digital Teaching Diary</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <img src="https://ui-avatars.com/api/?name=Teacher&background=4318FF&color=fff" class="rounded-circle border border-2 border-white shadow-sm" style="width: 42px; height: 42px;" alt="Profile">
+            <div class="d-none d-sm-block text-start">
+                <h6 class="mb-0 fw-semibold text-dark" th:text="${user != null ? user.firstName : 'Teacher'}">Teacher Name</h6>
+                <small class="text-muted" th:text="${user != null ? user.department : 'General'}">CS Dept</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats widgets -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-journal-text fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small fw-semibold">Total Lectures (Month)</h6>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${totalLecturesThisMonth}">0</h3>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="glass-panel">
-            <div class="panel-header">
-                <h2>Assigned Complaints</h2>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-calendar-check fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small fw-semibold">Syllabus Completed</h6>
+                        <h3 class="fw-bold mb-0 text-dark">72%</h3>
+                    </div>
+                </div>
             </div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Description</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="complaint : ${complaints}">
-                            <td th:text="'#' + ${complaint.id}">#102</td>
-                            <td th:text="${complaint.description}">Broken Projector</td>
-                            <td th:text="${complaint.location}">Room 101</td>
-                            <td>
-                                <span th:if="${complaint.status != null and complaint.status.name() == 'PENDING'}" class="status-badge badge-pending">Pending</span>
-                                <span th:if="${complaint.status != null and complaint.status.name() == 'APPROVED'}" class="status-badge badge-approved">Approved</span>
-                                <span th:if="${complaint.status != null and complaint.status.name() == 'REJECTED'}" class="status-badge badge-rejected">Rejected</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 55px; height: 55px;"><i class="bi bi-exclamation-triangle fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small fw-semibold">AI Risk Level</h6>
+                        <h3 class="fw-bold mb-0 text-dark">Medium</h3>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- AI Suggestion Box / Delay Warnings -->
+    <div class="card border-0 rounded-4 shadow-sm p-4 text-white mb-4" style="background: linear-gradient(135deg, #1e3c72, #2a5298);" th:each="pred : ${predictions}">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h5 class="fw-bold mb-1"><i class="bi bi-cpu me-2"></i> AI Lecture Recommendation (<span th:text="${pred.subject}">Subject</span>)</h5>
+                <p class="mb-0 text-white-50">Current progress indicates the syllabus will finish <span th:text="${pred.predictedDelayDays}">5</span> days late. <span th:text="${pred.recoveryPlan}">Conducting additional lectures can bring the schedule back on track.</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Lectures Scheduled -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold text-dark mb-3">Today's Scheduled Lectures</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Time</th>
+                        <th>Subject</th>
+                        <th>Class & Div</th>
+                        <th>Room</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="l : ${todayLectures}">
+                        <td th:text="${l.startTime} + ' - ' + ${l.endTime}">10:00 - 11:00</td>
+                        <td th:text="${l.subject}">AI</td>
+                        <td th:text="${l.course} + ' - ' + ${l.division}">MSc IMCA - A</td>
+                        <td th:text="${l.classroom}">Room 204</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-primary rounded-3" 
+                                        th:onclick="'prefillDiary(\'' + ${l.subject} + '\', \'' + ${l.course} + '\', \'' + ${l.division} + '\')'">
+                                    <i class="bi bi-journal-plus"></i> Start Lecture
+                                </button>
+                                <a th:href="@{/attendance/generate(subject=${l.subject},course=${l.course},division=${l.division})}" class="btn btn-sm btn-outline-success rounded-3">
+                                    <i class="bi bi-qr-code"></i> Generate QR
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(todayLectures)}">
+                        <td colspan="5" class="text-center text-muted py-3">No lectures scheduled for today.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Smart Syllabus Planning Card -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h5 class="fw-bold text-dark mb-1">Smart Syllabus Planner</h5>
+                <p class="text-muted small mb-0">Upload documents and manage teaching modules</p>
+            </div>
+            <button class="btn btn-outline-primary rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#uploadSyllabusModal"><i class="bi bi-cloud-arrow-up"></i> Upload Syllabus</button>
+        </div>
+
+        <div class="accordion" id="syllabusAccordion">
+            <div th:each="plan : ${syllabusPlans}" class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header" th:id="'heading' + ${plan.id}">
+                    <button class="accordion-button collapsed bg-white text-dark fw-semibold" type="button" data-bs-toggle="collapse" th:data-bs-target="'#collapse' + ${plan.id}">
+                        <span class="badge bg-primary me-2" th:text="${plan.unitName}">Unit 1</span>
+                        <span th:text="${plan.subject} + ' - ' + ${plan.topic}">Subject Topic</span>
+                    </button>
+                </h2>
+                <div th:id="'collapse' + ${plan.id}" class="accordion-collapse collapse" data-bs-parent="#syllabusAccordion">
+                    <div class="accordion-body bg-light rounded-3 p-3">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <p class="mb-1 text-muted small">Target Lectures: <strong class="text-dark" th:text="${plan.lecturesRequired}">8</strong></p>
+                                <p class="mb-1 text-muted small">Lectures Conducted: <strong class="text-dark" th:text="${plan.lecturesConducted}">0</strong></p>
+                                <p class="mb-1 text-muted small">Date Range: <span th:text="${plan.startDate} + ' to ' + ${plan.endDate}">Range</span></p>
+                            </div>
+                            <div class="col-12 col-md-6 text-end">
+                                <p class="mb-2 text-muted small">Status: 
+                                    <span class="badge" th:classappend="${plan.status == 'Completed' ? 'bg-success' : plan.status == 'Delayed' ? 'bg-danger' : 'bg-warning'}" th:text="${plan.status}">On Track</span>
+                                </p>
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <form th:action="@{/teacher/syllabus/update-status/{id}(id=${plan.id})}" method="post">
+                                        <input type="hidden" name="status" value="Completed">
+                                        <button type="submit" class="btn btn-sm btn-success">Mark Completed</button>
+                                    </form>
+                                    <form th:action="@{/teacher/syllabus/update-status/{id}(id=${plan.id})}" method="post">
+                                        <input type="hidden" name="status" value="Delayed">
+                                        <button type="submit" class="btn btn-sm btn-danger">Mark Delayed</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(syllabusPlans)}" class="text-center text-muted py-4">
+                No syllabus plans uploaded yet. Click upload to extract teaching units.
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Diary Logs Panel -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h5 class="fw-bold text-dark mb-0">Diary Logs</h5>
+            <button class="btn btn-primary rounded-3 px-3" data-bs-toggle="modal" data-bs-target="#addDiaryModal"><i class="bi bi-plus-lg"></i> Add Diary Log</button>
+        </div>
+
+        <!-- Filters -->
+        <form th:action="@{/teacher/dashboard}" method="get" class="row g-2 mb-4">
+            <div class="col-12 col-sm-4">
+                <input type="date" class="form-control" name="date" placeholder="Search by date">
+            </div>
+            <div class="col-12 col-sm-6">
+                <input type="text" class="form-control" name="subject" placeholder="Search by subject...">
+            </div>
+            <div class="col-12 col-sm-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Filter</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Subject</th>
+                        <th>Class</th>
+                        <th>Topic</th>
+                        <th>Attendance</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${diaryEntries}">
+                        <td th:text="${entry.date != null ? #temporals.format(entry.date, 'dd MMM yyyy') : 'N/A'}">05 Aug 2026</td>
+                        <td th:text="${entry.subject}">Computer Architecture</td>
+                        <td th:text="${entry.className} + ' - ' + ${entry.division}">TY - A</td>
+                        <td th:text="${entry.topicCovered}">Pipelining basics</td>
+                        <td th:text="${entry.attendance} != null ? ${entry.attendance} : '0'">68</td>
+                        <td>
+                            <form th:action="@{/teacher/diary/delete/{id}(id=${entry.id})}" method="post" onsubmit="return confirm('Delete this log entry?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-3"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(diaryEntries)}">
+                        <td colspan="6" class="text-center text-muted py-4">No diary entries matching filter logs.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Upload Syllabus Modal -->
+<div class="modal fade" id="uploadSyllabusModal" tabindex="-1" aria-labelledby="uploadSyllabusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary" id="uploadSyllabusModalLabel">Upload Syllabus File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/teacher/syllabus/upload}" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Subject Name</label>
+                        <input type="text" class="form-control rounded-3" name="subject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Choose Syllabus File (PDF/Excel/DOCX)</label>
+                        <input type="file" class="form-control rounded-3" name="file" accept=".pdf,.docx,.xlsx,.csv" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-3">Upload & Parse</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Diary Modal -->
+<div class="modal fade" id="addDiaryModal" tabindex="-1" aria-labelledby="addDiaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary" id="addDiaryModalLabel">Log Lecture Diary Entry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/teacher/diary/add}" method="post" th:object="${newDiary}">
+                <div class="modal-body">
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-semibold">Subject</label>
+                            <input type="text" class="form-control rounded-3" th:field="*{subject}" id="subjectInput" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-semibold">Date</label>
+                            <input type="date" class="form-control rounded-3" th:field="*{date}" id="dateInput" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-semibold">Class / Semester</label>
+                            <input type="text" class="form-control rounded-3" th:field="*{className}" id="classNameInput" placeholder="e.g. TY" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-semibold">Division</label>
+                            <input type="text" class="form-control rounded-3" th:field="*{division}" id="divisionInput" placeholder="e.g. A" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Topic Covered</label>
+                        <input type="text" class="form-control rounded-3" th:field="*{topicCovered}" id="topicInput" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Learning Outcome</label>
+                        <input type="text" class="form-control rounded-3" th:field="*{learningOutcome}">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-semibold">Attendance count</label>
+                            <input type="number" class="form-control rounded-3" th:field="*{attendance}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted small fw-semibold">Teaching Method</label>
+                            <input type="text" class="form-control rounded-3" th:field="*{teachingMethod}" placeholder="e.g. PPT, Blackboard">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Remarks</label>
+                        <textarea class="form-control rounded-3" th:field="*{remarks}" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-3 px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-3">Log Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function prefillDiary(subject, course, division) {
+        document.getElementById("subjectInput").value = subject;
+        document.getElementById("classNameInput").value = course;
+        document.getElementById("divisionInput").value = division;
+        
+        // Auto prefill today's date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("dateInput").value = today;
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById("addDiaryModal"));
+        modal.show();
+    }
+
+    // Draft Autosave logic
+    let autosaveTimer;
+    const subjectEl = document.getElementById("subjectInput");
+    const topicEl = document.getElementById("topicInput");
+
+    function triggerAutosave() {
+        clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(async () => {
+            const subject = subjectEl.value.trim();
+            const topicCovered = topicEl.value.trim();
+            if (!subject) return;
+
+            const payload = {
+                subject: subject,
+                topicCovered: topicCovered,
+                className: "TY",
+                division: "A",
+                semester: "V"
+            };
+
+            try {
+                const response = await fetch('/api/diary/autosave', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                console.log("Draft autosaved ID:", data.id);
+            } catch (e) {
+                console.warn("Autosave failed", e);
+            }
+        }, 3000); // Autosave after 3s of idle typing
+    }
+
+    if (subjectEl && topicEl) {
+        subjectEl.addEventListener("input", triggerAutosave);
+        topicEl.addEventListener("input", triggerAutosave);
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+    document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('active') && !sidebar.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+</script>
 </body>
 </html>

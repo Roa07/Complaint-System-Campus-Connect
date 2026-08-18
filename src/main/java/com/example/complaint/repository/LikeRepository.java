@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LikeRepository extends JpaRepository<ComplaintLike, Long> {
 
     boolean existsByComplaintAndUser(Complaint complaint, User user);
+    void deleteByUser(User user);
 }

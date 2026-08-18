@@ -4,175 +4,220 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - Campus Connect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #f4f7fe; color: #2b3674; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-
-        .profile-container {
-            width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px;
+        body {
+            background-color: #f4f7fe;
+            font-family: 'Poppins', sans-serif;
         }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
-            border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: #fff;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
-
-        /* Left Side: Avatar */
-        .avatar-section { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .avatar-wrapper { position: relative; width: 150px; height: 150px; margin-bottom: 20px; }
-        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .camera-btn {
-            position: absolute; bottom: 5px; right: 5px; background: #4318FF; color: #fff;
-            width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; border: 2px solid #fff; transition: 0.3s;
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+            transition: all 0.3s ease;
         }
-        .camera-btn:hover { background: #3311cc; }
-        #fileInput { display: none; }
-        
-        .role-badge {
-            background: #e8f0ff; color: #4318FF; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 10px; display: inline-block;
+        .sidebar .nav-link {
+            color: #a3aed1;
+            font-weight: 500;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
         }
-
-        /* Right Side: Forms */
-        .panel-header { margin-bottom: 25px; border-bottom: 2px solid #f4f7fe; padding-bottom: 10px; }
-        .panel-header h2 { font-size: 22px; font-weight: 700; color: #11047A; }
-
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 500; color: #a3aed1; margin-bottom: 8px; }
-        .form-group input {
-            width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #e0e5f2;
-            background: #fdfdfd; font-size: 14px; color: #2b3674; outline: none; transition: 0.3s;
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #4318FF;
+            color: #fff;
         }
-        .form-group input:focus { border-color: #4318FF; box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1); }
-
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        .btn-primary {
-            background: #4318FF; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px;
-            font-weight: 600; border: none; cursor: pointer; transition: 0.3s; width: 100%;
-        }
-        .btn-primary:hover { background: #3311cc; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(67, 24, 255, 0.3); }
-
-        .alert { padding: 12px 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 500; }
-        .alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-        .alert-danger { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
-
-        .back-link { display: block; margin-top: 20px; text-align: center; text-decoration: none; color: #4318FF; font-weight: 500; font-size: 14px; }
-        .back-link:hover { text-decoration: underline; }
-
-        @media(max-width: 768px) {
-            .profile-container { grid-template-columns: 1fr; }
-            .row { grid-template-columns: 1fr; }
+        @media(max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="profile-container">
-        
+<!-- Sidebar -->
+<aside class="sidebar p-4 d-flex flex-column" id="sidebar">
+    <div class="logo fs-4 fw-bold text-primary mb-4 px-2" th:text="${user != null ? user.role.replace('ROLE_', '') : 'User'}">
+        User
+    </div>
+    <ul class="nav flex-column flex-grow-1">
+        <th:block th:if="${user != null and user.role == 'ROLE_ADMIN'}">
+            <li class="nav-item"><a href="/admin/dashboard" class="nav-link"><i class="bi bi-pie-chart-fill"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="/admin/users" class="nav-link"><i class="bi bi-people-fill"></i> Manage Users</a></li>
+            <li class="nav-item"><a href="/admin/assign" class="nav-link"><i class="bi bi-person-check-fill"></i> Assign</a></li>
+            <li class="nav-item"><a href="/admin/reports" class="nav-link"><i class="bi bi-file-earmark-bar-graph-fill"></i> Reports</a></li>
+        </th:block>
+        <th:block th:if="${user != null and (user.role == 'ROLE_STUDENT' or user.role == 'ROLE_USER')}">
+            <li class="nav-item"><a href="/student/dashboard" class="nav-link"><i class="bi bi-grid-fill"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="/home2" class="nav-link"><i class="bi bi-plus-circle-fill"></i> New Complaint</a></li>
+        </th:block>
+        <th:block th:if="${user != null and user.role == 'ROLE_TEACHER'}">
+            <li class="nav-item"><a href="/teacher/dashboard" class="nav-link"><i class="bi bi-list-task"></i> Tasks</a></li>
+        </th:block>
+        <li class="nav-item"><a href="/notifications" class="nav-link"><i class="bi bi-bell-fill"></i> Notifications</a></li>
+        <li class="nav-item"><a href="/profile" class="nav-link active"><i class="bi bi-person-fill"></i> Profile</a></li>
+    </ul>
+    
+    <form th:action="@{/logout}" method="post" class="mt-auto">
+        <button type="submit" class="btn btn-outline-danger w-100 rounded-3 py-2 fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </form>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+    
+    <!-- Topbar -->
+    <header class="d-flex justify-content-between align-items-center mb-4 gap-3">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-light d-lg-none rounded-circle p-2 shadow-sm" id="menuToggle"><i class="bi bi-list fs-4"></i></button>
+            <h1 class="h3 fw-bold mb-0 text-primary">My Profile</h1>
+        </div>
+    </header>
+
+    <div class="row g-4">
         <!-- Avatar Panel -->
-        <div class="glass-panel avatar-section">
-            <div class="avatar-wrapper">
-                <img th:if="${user.profileImage != null}" th:src="@{'/uploads/profile/' + ${user.profileImage}}" class="avatar-img" alt="Profile">
-                <img th:unless="${user.profileImage != null}" src="https://ui-avatars.com/api/?name=User&background=4318FF&color=fff&size=150" class="avatar-img" id="previewImg" alt="Profile">
-                <div class="camera-btn" onclick="document.getElementById('fileInput').click();">
-                    <i class="fa-solid fa-camera"></i>
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white text-center">
+                <div class="position-relative d-inline-block mx-auto mb-3" style="width: 150px; height: 150px;">
+                    <img th:if="${user.profileImage != null}" th:src="@{'/uploads/profile/' + ${user.profileImage}}" class="rounded-circle border border-3 border-white shadow-sm w-100 h-100 object-cover" alt="Profile">
+                    <img th:unless="${user.profileImage != null}" src="https://ui-avatars.com/api/?name=User&background=4318FF&color=fff&size=150" class="rounded-circle border border-3 border-white shadow-sm w-100 h-100 object-cover" id="previewImg" alt="Profile">
+                    <button class="btn btn-primary rounded-circle position-absolute bottom-0 end-0 p-2 d-flex align-items-center justify-content-center shadow" style="width: 38px; height: 38px;" onclick="document.getElementById('fileInput').click();">
+                        <i class="bi bi-camera-fill"></i>
+                    </button>
                 </div>
+                <h5 class="fw-bold mb-1 text-dark" th:text="${user.displayName}">John Doe</h5>
+                <p class="text-muted small mb-3" th:text="${user.email}">john@example.com</p>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 small" th:text="${user.role}">ROLE_STUDENT</span>
             </div>
-            
-            <h3 th:text="${user.firstName + ' ' + user.lastName}" style="font-size: 20px; font-weight: 700; color: #11047A;">John Doe</h3>
-            <p th:text="${user.email}" style="font-size: 14px; color: #a3aed1; margin-bottom: 5px;">john@example.com</p>
-            <span class="role-badge" th:text="${user.role}">ROLE_STUDENT</span>
-            
-            <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
         </div>
 
         <!-- Forms Panel -->
-        <div>
-            <!-- Update Profile Form -->
-            <div class="glass-panel" style="margin-bottom: 20px;">
-                <div class="panel-header">
-                    <h2>Edit Profile</h2>
+        <div class="col-12 col-md-8">
+            <!-- Edit Profile -->
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold text-primary mb-4">Edit Profile</h5>
+
+                <div th:if="${param.updated}" class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> Profile updated successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                
-                <div th:if="${param.updated}" class="alert alert-success"><i class="fa-solid fa-check-circle"></i> Profile updated successfully!</div>
-                <div th:if="${error}" class="alert alert-danger"><i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}"></span></div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
 
                 <form th:action="@{/profile/update}" th:object="${user}" method="post" enctype="multipart/form-data">
-                    <input type="file" name="image" id="fileInput" onchange="previewFile()">
+                    <input type="file" name="image" id="fileInput" class="d-none" onchange="previewFile()">
                     
-                    <div class="row">
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" th:field="*{firstName}" required>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label text-muted small fw-semibold">First Name</label>
+                            <input type="text" class="form-control rounded-3" th:field="*{firstName}" required>
                         </div>
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" th:field="*{lastName}" required>
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label text-muted small fw-semibold">Last Name</label>
+                            <input type="text" class="form-control rounded-3" th:field="*{lastName}" required>
                         </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Middle Name (Optional)</label>
-                        <input type="text" th:field="*{middleName}">
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Middle Name (Optional)</label>
+                        <input type="text" class="form-control rounded-3" th:field="*{middleName}">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" th:field="*{email}" readonly style="background: #f4f7fe; color: #a3aed1; cursor: not-allowed;">
+
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-semibold">Email Address</label>
+                        <input type="email" class="form-control rounded-3 bg-light text-muted" th:field="*{email}" readonly style="cursor: not-allowed;">
                     </div>
-                    
-                    <button type="submit" class="btn-primary">Save Changes</button>
+
+                    <button type="submit" class="btn btn-primary rounded-3 px-4 py-2 fw-semibold">Save Changes</button>
                 </form>
             </div>
 
-            <!-- Change Password Form -->
-            <div class="glass-panel">
-                <div class="panel-header">
-                    <h2>Change Password</h2>
+            <!-- Change Password -->
+            <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-primary mb-4">Change Password</h5>
+
+                <div th:if="${param.passwordChanged}" class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> Password changed successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
 
-                <div th:if="${param.passwordChanged}" class="alert alert-success"><i class="fa-solid fa-check-circle"></i> Password changed successfully!</div>
-
                 <form th:action="@{/profile/change-password}" method="post">
-                    <div class="form-group">
-                        <label>Current Password</label>
-                        <input type="password" name="oldPassword" required>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Current Password</label>
+                        <input type="password" class="form-control rounded-3" name="oldPassword" required>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label>New Password</label>
-                            <input type="password" name="newPassword" required>
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label text-muted small fw-semibold">New Password</label>
+                            <input type="password" class="form-control rounded-3" name="newPassword" required>
                         </div>
-                        <div class="form-group">
-                            <label>Confirm Password</label>
-                            <input type="password" name="confirmPassword" required>
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label text-muted small fw-semibold">Confirm Password</label>
+                            <input type="password" class="form-control rounded-3" name="confirmPassword" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn-primary" style="background: #11047A;">Update Password</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4 py-2 fw-semibold">Update Password</button>
                 </form>
             </div>
         </div>
-        
     </div>
 
-    <script>
-        function previewFile() {
-            const preview = document.getElementById('previewImg');
-            const file = document.querySelector('input[type=file]').files[0];
-            const reader = new FileReader();
+</div>
 
-            reader.addEventListener("load", function () {
-                preview.src = reader.result;
-            }, false);
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-            if (file) {
-                reader.readAsDataURL(file);
-            }
+<script>
+    function previewFile() {
+        const preview = document.getElementById('previewImg');
+        const file = document.querySelector('input[name=image]').files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            preview.src = reader.result;
+        }, false);
+
+        if (file) {
+            reader.readAsDataURL(file);
         }
-    </script>
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+    document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('active') && !sidebar.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+</script>
 </body>
 </html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HOD Timetable Management</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'timetable', 'Timetable Management', 'Timetable')}">
+    <main>
+        <!-- Alert triggers -->
+        <div th:if="${param.success}" class="alert alert-success rounded-3 py-2 text-center" role="alert">
+            Timetable Entry Added Successfully!
+        </div>
+        <div th:if="${param.uploadSuccess}" class="alert alert-success rounded-3 py-2 text-center" role="alert">
+            Timetable File Uploaded and Processed Successfully!
+        </div>
+        <div th:if="${param.deleted}" class="alert alert-warning rounded-3 py-2 text-center" role="alert">
+            Timetable Entry Deleted.
+        </div>
+
+        <!-- Upload timetable file -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-upload text-primary"></i> Upload Timetable File</h5>
+            <p class="text-muted small">Select a schedule file (PDF, XLSX, CSV) to parse and build the weekly timeline.</p>
+            <form th:action="@{/hod/timetable/upload}" method="post" enctype="multipart/form-data" class="row g-2">
+                <div class="col-9">
+                    <input type="file" class="form-control rounded-3" name="file" accept=".pdf,.xlsx,.xls,.csv" required>
+                </div>
+                <div class="col-3">
+                    <button type="submit" class="btn btn-primary w-100 rounded-3">Upload</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Manual input timetable -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-plus-circle text-success"></i> Add Timetable Entry Manually</h5>
+            <form th:action="@{/hod/timetable/add}" method="post" th:object="${newEntry}" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Day</label>
+                    <select class="form-select rounded-3" th:field="*{day}" required>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Start Time</label>
+                    <input type="time" class="form-control rounded-3" th:field="*{startTime}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted">End Time</label>
+                    <input type="time" class="form-control rounded-3" th:field="*{endTime}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted">Lecture No.</label>
+                    <input type="number" class="form-control rounded-3" th:field="*{lectureNumber}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Subject</label>
+                    <input type="text" class="form-control rounded-3" th:field="*{subject}" placeholder="e.g. AI" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Select Teacher</label>
+                    <select class="form-select rounded-3" name="teacherId" required>
+                        <option th:each="t : ${teachers}" th:value="${t.id}" th:text="${t.displayName}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Course</label>
+                    <input type="text" class="form-control rounded-3" th:field="*{course}" placeholder="e.g. MSc IMCA" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Year</label>
+                    <input type="text" class="form-control rounded-3" th:field="*{year}" placeholder="e.g. SY" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Semester</label>
+                    <input type="text" class="form-control rounded-3" th:field="*{semester}" placeholder="e.g. Semester 2" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold text-muted">Division</label>
+                    <input type="text" class="form-control rounded-3" th:field="*{division}" placeholder="e.g. A" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold text-muted">Classroom</label>
+                    <input type="text" class="form-control rounded-3" th:field="*{classroom}" placeholder="e.g. 204" required>
+                </div>
+
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-success rounded-3 px-4">Add Entry</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Timetable list -->
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+            <h5 class="fw-bold text-dark mb-3">Scheduled Timetable Mappings</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Day</th>
+                            <th>Lecture</th>
+                            <th>Time</th>
+                            <th>Subject</th>
+                            <th>Teacher</th>
+                            <th>Room</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e : ${entries}">
+                            <td th:text="${e.day}">Monday</td>
+                            <td th:text="${e.lectureNumber}">1</td>
+                            <td th:text="${e.startTime} + ' - ' + ${e.endTime}">10:00 - 11:00</td>
+                            <td th:text="${e.subject}">AI</td>
+                            <td th:text="${e.teacher.displayName}">Prof. Amit</td>
+                            <td th:text="${e.classroom}">204</td>
+                            <td>
+                                <form th:action="@{/hod/timetable/delete/{id}(id=${e.id})}" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(entries)}">
+                            <td colspan="7" class="text-center text-muted py-3">No timetable entries logged yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

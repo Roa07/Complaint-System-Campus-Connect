@@ -2,209 +2,82 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Campus Connect – Post Complaint</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Complaint - Campus Connect</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            background: #f4f6f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: #f4f6f9;
         }
-
-        .form-box {
-            width: 500px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            position: relative;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #1e3c72;
-        }
-
-        label {
-            font-size: 13px;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            margin-bottom: 15px;
-            transition: 0.3s;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            border-color: #1e3c72;
-            box-shadow: 0 0 5px rgba(30,60,114,0.3);
-        }
-
-        textarea {
-            resize: none;
-            height: 100px;
-        }
-
-        /* Validation */
-        .error {
-            border: 1px solid red;
-        }
-
-        .error-text {
-            color: red;
-            font-size: 12px;
-            margin-top: -10px;
-            margin-bottom: 10px;
-        }
-
-        /* Buttons */
-        .btn-group {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        button {
-            width: 48%;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .submit-btn {
-            background: #1e3c72;
-            color: #fff;
-        }
-
-        .submit-btn:hover {
-            background: #2a5298;
-        }
-
-        .reset-btn {
-            background: #6c757d;
-            color: #fff;
-        }
-
-        /* Image Preview */
-        #preview {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        /* Spinner */
-        .spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none;
-        }
-
-        .spinner div {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #ccc;
-            border-top: 4px solid #1e3c72;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Success Animation */
-        .success-message {
-            text-align: center;
-            color: green;
-            font-weight: 500;
-            margin-bottom: 15px;
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
     </style>
 </head>
+<body class="d-flex align-items-center justify-content-center min-vh-100 py-5">
 
-<body>
-
-<div class="form-box">
-
-    <h2>Post Complaint</h2>
-
-    <div class="success-message" id="successMsg">
-        ✅ Complaint posted successfully!
-    </div>
-
-    <form th:action="@{/submit}"
-          method="post"
-          enctype="multipart/form-data"
-          onsubmit="return validateForm()">
-
-        <label>Description</label>
-        <textarea name="description" id="description" required></textarea>
-        <div class="error-text" id="descError"></div>
-
-        <label>Location</label>
-        <select name="location" id="location" required>
-            <option value="">Select Location</option>
-            <option>Library</option>
-            <option>Canteen</option>
-            <option>Auditorium</option>
-            <option>Hostel</option>
-        </select>
-        <div class="error-text" id="locError"></div>
-
-        <label>Block Name</label>
-        <input type="text" name="blockName">
-
-        <label>Upload Photo</label>
-        <input type="file" name="image" id="imageInput" accept="image/*">
-
-        <img id="preview">
-
-        <div class="btn-group">
-            <button type="submit" class="submit-btn">Post</button>
-            <button type="reset" class="reset-btn">Cancel</button>
+<div class="card shadow-lg border-0 rounded-4 p-4 position-relative" style="width: 500px; max-width: 100%;">
+    <div class="card-body">
+        
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-primary">Post Complaint</h3>
+            <p class="text-muted small">Submit details regarding campus infrastructure or services</p>
         </div>
 
-    </form>
+        <div class="alert alert-success d-none py-2 text-center rounded-3" id="successMsg" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> Complaint posted successfully!
+        </div>
 
-    <div class="spinner" id="spinner">
-        <div></div>
+        <form th:action="@{/submit}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <div class="mb-3">
+                <label for="description" class="form-label text-muted small fw-semibold">Description</label>
+                <textarea class="form-control rounded-3" name="description" id="description" rows="4" placeholder="Explain the issue in detail (min 10 chars)..." required></textarea>
+                <div class="invalid-feedback" id="descError">Description must be at least 10 characters.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="location" class="form-label text-muted small fw-semibold">Location</label>
+                <select class="form-select rounded-3" name="location" id="location" required>
+                    <option value="">Select Location</option>
+                    <option>Library</option>
+                    <option>Canteen</option>
+                    <option>Auditorium</option>
+                    <option>Hostel</option>
+                </select>
+                <div class="invalid-feedback" id="locError">Please select a location.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="blockName" class="form-label text-muted small fw-semibold">Block Name (Optional)</label>
+                <input type="text" class="form-control rounded-3" name="blockName" id="blockName" placeholder="e.g. Block A, Room 204">
+            </div>
+
+            <div class="mb-3">
+                <label for="imageInput" class="form-label text-muted small fw-semibold">Upload Photo</label>
+                <input class="form-control rounded-3" type="file" name="image" id="imageInput" accept="image/*">
+            </div>
+
+            <div class="mb-4 text-center">
+                <img id="preview" class="img-fluid rounded-3 border d-none" style="max-height: 200px; width: 100%; object-fit: cover;" alt="Preview image">
+            </div>
+
+            <div class="row g-2">
+                <div class="col-6">
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3 d-flex align-items-center justify-content-center gap-2">
+                        <span>Post</span>
+                        <span class="spinner-border spinner-border-sm d-none" id="spinner" role="status" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button type="button" class="btn btn-light w-100 py-2 fw-semibold rounded-3 border" onclick="history.back()">Cancel</button>
+                </div>
+            </div>
+        </form>
+
     </div>
-
 </div>
 
 <script>
-
     // Image Preview
     document.getElementById("imageInput").addEventListener("change", function(e) {
         const file = e.target.files[0];
@@ -212,53 +85,42 @@
 
         if (file) {
             preview.src = URL.createObjectURL(file);
-            preview.style.display = "block";
+            preview.classList.remove("d-none");
         }
     });
 
     // Validation
     function validateForm() {
-
         let valid = true;
-
         const desc = document.getElementById("description");
         const loc = document.getElementById("location");
 
-        document.getElementById("descError").innerText = "";
-        document.getElementById("locError").innerText = "";
+        desc.classList.remove("is-invalid");
+        loc.classList.remove("is-invalid");
 
         if (desc.value.trim().length < 10) {
-            desc.classList.add("error");
-            document.getElementById("descError").innerText =
-                "Description must be at least 10 characters.";
+            desc.classList.add("is-invalid");
             valid = false;
-        } else {
-            desc.classList.remove("error");
         }
 
         if (loc.value === "") {
-            loc.classList.add("error");
-            document.getElementById("locError").innerText =
-                "Please select a location.";
+            loc.classList.add("is-invalid");
             valid = false;
-        } else {
-            loc.classList.remove("error");
         }
 
         if (valid) {
-            document.getElementById("spinner").style.display = "block";
+            document.getElementById("spinner").classList.remove("d-none");
         }
-
         return valid;
     }
 
     // Show success message if redirected
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('success')) {
-        document.getElementById("successMsg").style.display = "block";
+        document.getElementById("successMsg").classList.remove("d-none");
     }
-
 </script>
-
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

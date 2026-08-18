@@ -1,0 +1,267 @@
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-width: 0;
+}
+
+img,
+canvas,
+video {
+    max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+    font: inherit;
+}
+
+.main-content,
+.glass-panel,
+.form-box,
+.register-card,
+form {
+    min-width: 0;
+}
+
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+    min-width: 680px;
+}
+
+.glass-panel canvas {
+    display: block;
+    width: 100% !important;
+    min-height: 240px;
+}
+
+@media (max-width: 1100px) {
+    .content-grid,
+    .charts-grid,
+    .profile-container {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 992px) {
+    body {
+        display: block !important;
+        overflow-x: hidden;
+    }
+
+    .sidebar {
+        position: sticky !important;
+        top: 0;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0;
+        padding: 14px 16px !important;
+        transform: none !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 14px;
+        overflow-x: auto;
+        z-index: 200;
+    }
+
+    .sidebar .logo,
+    .logo {
+        flex: 0 0 auto;
+        margin: 0 !important;
+        font-size: 18px !important;
+        white-space: nowrap;
+    }
+
+    .nav-links {
+        display: flex;
+        flex: 1 0 auto;
+        gap: 8px;
+        margin: 0;
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
+
+    .nav-links li {
+        margin: 0 !important;
+        flex: 0 0 auto;
+    }
+
+    .nav-links a {
+        padding: 10px 12px !important;
+        border-radius: 10px !important;
+        white-space: nowrap;
+    }
+
+    .sidebar form {
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+
+    .logout-btn {
+        margin-top: 0 !important;
+        white-space: nowrap;
+    }
+
+    .main-content,
+    .content {
+        margin-left: 0 !important;
+        padding: 22px !important;
+        width: 100%;
+    }
+
+    .menu-toggle {
+        display: none !important;
+    }
+
+    .topbar {
+        align-items: flex-start !important;
+        gap: 16px !important;
+    }
+
+    .topbar h1 {
+        font-size: 28px !important;
+        line-height: 1.2;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+        margin-bottom: 24px !important;
+    }
+
+    .stat-card,
+    .glass-panel {
+        border-radius: 16px !important;
+    }
+
+    .panel-header,
+    .filters {
+        align-items: stretch !important;
+        flex-wrap: wrap;
+    }
+
+    .filters input,
+    .filters select,
+    .search-bar,
+    .search-bar input {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 700px) {
+    .main-content,
+    .content {
+        padding: 16px !important;
+    }
+
+    .topbar,
+    .topbar .search-profile,
+    .panel-header,
+    .filters,
+    .btn-group,
+    .modal-footer {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .topbar h1 {
+        font-size: 24px !important;
+    }
+
+    .profile {
+        width: 100%;
+    }
+
+    .profile-info {
+        min-width: 0;
+    }
+
+    .profile-info h4,
+    .profile-info p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stat-card {
+        padding: 18px !important;
+    }
+
+    .icon-box {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 20px !important;
+    }
+
+    .glass-panel,
+    .form-box,
+    .register-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px !important;
+        border-radius: 14px !important;
+    }
+
+    .row {
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+    }
+
+    .btn-group {
+        gap: 10px;
+    }
+
+    .btn-group button,
+    .btn-export,
+    .btn-primary,
+    .btn-action {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .modal {
+        padding: 16px;
+    }
+
+    .modal-content {
+        width: 100% !important;
+        max-width: 460px;
+        padding: 22px !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .sidebar {
+        align-items: flex-start;
+        flex-direction: column !important;
+    }
+
+    .nav-links {
+        width: 100%;
+    }
+
+    .sidebar form,
+    .logout-btn {
+        width: 100%;
+    }
+
+    .topbar h1 {
+        font-size: 22px !important;
+    }
+
+    th,
+    td {
+        padding: 12px !important;
+    }
+}

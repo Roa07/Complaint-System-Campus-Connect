@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Students</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'students', 'Students Under Management', 'Students')}">
+    <main>
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+            <h5 class="fw-bold text-dark mb-4">Students Under Management</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Year & Division</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${students}">
+                            <td th:text="${s.rollNumber}">102</td>
+                            <td th:text="${s.displayName}">Alex Chen</td>
+                            <td th:text="${s.year} + ' - ' + ${s.division}">TY - A</td>
+                            <td th:text="${s.email}">alex@campus.edu</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(students)}">
+                            <td colspan="4" class="text-center text-muted py-4">No students currently registered under this HOD.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Teachers</title>
+</head>
+<body>
+
+<div th:replace="~{hod-layout :: layout(~{::main}, 'teachers', 'Department Faculty', 'Faculty')}">
+    <main>
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h5 class="fw-bold text-dark mb-0">Department Faculty</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="t : ${teachers}">
+                            <td th:text="${t.employeeId}">EMP01</td>
+                            <td th:text="${t.displayName}">Dr. Sneha Patil</td>
+                            <td th:text="${t.designation}">Professor</td>
+                            <td th:text="${t.email}">sneha@campus.edu</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/hod/teacher/{id}/diary(id=${t.id})}" class="btn btn-sm btn-outline-primary rounded-3">View Diary</a>
+                                    <form th:action="@{/hod/teacher/{id}/deactivate(id=${t.id})}" method="post" onsubmit="return confirm('Deactivate teacher account?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-3">Deactivate</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(teachers)}">
+                            <td colspan="5" class="text-center text-muted py-4">No teachers currently mapped to this HOD.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

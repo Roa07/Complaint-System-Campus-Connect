@@ -198,7 +198,46 @@
         .profile-popup button:hover {
             background: #2a5298;
         }
+
+        @media (max-width: 640px) {
+            .topbar {
+                padding: 12px 16px;
+                align-items: flex-start;
+                gap: 10px;
+                flex-direction: column;
+            }
+
+            .topbar .right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .topbar .right a,
+            .topbar .right button {
+                margin-left: 0;
+            }
+
+            .profile-popup {
+                left: 16px;
+                right: 16px;
+                width: auto;
+                top: 96px;
+            }
+
+            .main {
+                margin: 22px auto;
+                padding: 0 16px;
+            }
+
+            .button-group,
+            .card-actions {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+        }
     </style>
+    <link rel="stylesheet" th:href="@{/responsive.css}" href="/responsive.css">
 </head>
 
 <body>
@@ -218,8 +257,8 @@
 </div>
 
 <div class="profile-popup" id="profilePopup">
-    <p><strong>Name:</strong> <span th:text="${user.firstName}">Student</span></p>
-    <p><strong>Role:</strong> <span th:text="${user.role}">User</span></p>
+    <p><strong>Name:</strong> <span th:text="${user != null ? user.displayName : 'User'}">Student</span></p>
+    <p><strong>Role:</strong> <span th:text="${user != null ? user.role : 'User'}">User</span></p>
 
     <a th:href="@{/profile}">Edit Profile Settings</a>
 
@@ -354,10 +393,11 @@
         } catch (error) {
             console.error("Error deleting complaint:", error);
         }
+    }
+
     // Load immediately on page load, then refresh every 5 seconds
     window.onload = loadComplaints;
     setInterval(loadComplaints, 5000);
-    }
 
 </script>
 

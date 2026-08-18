@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - Campus Connect</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7fe;
+            font-family: 'Poppins', sans-serif;
+        }
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: #fff;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link {
+            color: #a3aed1;
+            font-weight: 500;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #4318FF;
+            color: #fff;
+        }
+        @media(max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar p-4 d-flex flex-column" id="sidebar">
+    <div class="d-flex align-items-center gap-2 mb-4 px-2">
+        <i class="bi bi-shield-fill-check fs-3 text-primary"></i>
+        <span class="fs-4 fw-bold text-primary">Admin</span>
+    </div>
+    <ul class="nav flex-column flex-grow-1">
+        <li class="nav-item">
+            <a href="/admin/dashboard" class="nav-link">
+                <i class="bi bi-pie-chart-fill"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/users" class="nav-link active">
+                <i class="bi bi-people-fill"></i> Manage Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/assign" class="nav-link">
+                <i class="bi bi-person-check-fill"></i> Assign Complaints
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/admin/reports" class="nav-link">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i> Reports
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/profile" class="nav-link">
+                <i class="bi bi-person-fill"></i> Profile
+            </a>
+        </li>
+    </ul>
+    
+    <form th:action="@{/logout}" method="post" class="mt-auto">
+        <button type="submit" class="btn btn-outline-danger w-100 rounded-3 py-2 fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </form>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+    
+    <!-- Topbar -->
+    <header class="d-flex justify-content-between align-items-center mb-4 gap-3">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-light d-lg-none rounded-circle p-2 shadow-sm" id="menuToggle"><i class="bi bi-list fs-4"></i></button>
+            <h1 class="h3 fw-bold mb-0 text-primary">Manage Users</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <div class="profile-initials rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px;" th:text="${userInitials}">AD</div>
+            <div class="d-none d-sm-block text-start">
+                <h6 class="mb-0 fw-semibold text-dark" th:text="${userDisplayName}">Admin Name</h6>
+                <small class="text-muted">Administrator</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-people-fill fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Total Users</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${totalUsers}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-mortarboard-fill fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Students</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${studentCount}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-person-workspace fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Teachers</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${teacherCount}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-shield-fill-check fs-5"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-0 small fw-semibold">Admins</h6>
+                        <h4 class="fw-bold mb-0 text-dark" th:text="${adminCount}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Panel -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h5 class="fw-bold text-primary mb-0">System Users</h5>
+            <a href="/register" class="btn btn-primary rounded-3 px-3"><i class="bi bi-plus-lg"></i> Add User</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Filters -->
+        <div class="row g-2 mb-4">
+            <div class="col-12 col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0" id="userInput" placeholder="Search by name or email..." onkeyup="filterUsers()">
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <select class="form-select" id="roleFilter" onchange="filterUsers()">
+                    <option value="">All Roles</option>
+                    <option value="ROLE_STUDENT">Student</option>
+                    <option value="ROLE_TEACHER">Teacher</option>
+                    <option value="ROLE_ADMIN">Admin</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="usersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${users}">
+                        <td th:text="${u.id}">1</td>
+                        <td>
+                            <img th:if="${u.profileImage != null}" th:src="@{'/uploads/profile/' + ${u.profileImage}}" class="rounded-circle object-cover" style="width: 40px; height: 40px;" alt="Profile">
+                            <img th:unless="${u.profileImage != null}" src="https://ui-avatars.com/api/?name=User&background=4318FF&color=fff" class="rounded-circle object-cover" style="width: 40px; height: 40px;" alt="Profile">
+                        </td>
+                        <td th:text="${u.displayName}">John Doe</td>
+                        <td th:text="${u.email}">john@example.com</td>
+                        <td>
+                            <span class="badge bg-secondary rounded-pill" th:text="${u.role}">ROLE_STUDENT</span>
+                        </td>
+                        <td th:text="${u.department != null ? u.department : 'N/A'}">Computer Science</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-sm btn-outline-secondary rounded-3 px-3">Edit</a>
+                                <form th:if="${user == null or u.id != user.id}"
+                                      th:action="@{/admin/users/{id}/delete(id=${u.id})}"
+                                      method="post"
+                                      class="d-inline-block"
+                                      onsubmit="return confirm('Delete this user? Their complaints will remain, but the user account will be removed.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-3 px-3">Delete</button>
+                                </form>
+                                <span th:if="${user != null and u.id == user.id}" class="badge bg-light text-primary border rounded-3 p-2 small">Current Admin</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function filterUsers() {
+        const input = document.getElementById("userInput").value.toUpperCase();
+        const role = document.getElementById("roleFilter").value.toUpperCase();
+        const table = document.getElementById("usersTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            const tdName = tr[i].getElementsByTagName("td")[2];
+            const tdEmail = tr[i].getElementsByTagName("td")[3];
+            const tdRole = tr[i].getElementsByTagName("td")[4];
+            if (tdName || tdEmail) {
+                const nameVal = tdName.textContent || tdName.innerText;
+                const emailVal = tdEmail.textContent || tdEmail.innerText;
+                const roleVal = tdRole.textContent || tdRole.innerText;
+
+                const matchesText = nameVal.toUpperCase().indexOf(input) > -1 || emailVal.toUpperCase().indexOf(input) > -1;
+                const matchesRole = role === "" || roleVal.toUpperCase().indexOf(role) > -1;
+
+                if (matchesText && matchesRole) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+    document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('active') && !sidebar.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+</script>
+</body>
+</html>

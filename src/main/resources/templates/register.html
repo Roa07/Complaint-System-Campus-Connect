@@ -2,196 +2,213 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Campus Connect</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* Modern Gradient Background */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0e7ff 0%, #fae8ff 50%, #f5f3ff 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        /* The Glass-style Container */
-        .register-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        }
-
-        h2 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 30px;
-            margin-top: 0;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            color: #4b5563;
-            margin-bottom: 8px;
-        }
-
-        /* Input Styling to match the image */
-        input, select {
-            width: 100%;
-            padding: 14px 16px;
-            background: #f3f4f6;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            color: #1f2937;
-            box-sizing: border-box;
-            transition: all 0.2s ease;
-        }
-
-        input::placeholder {
-            color: #9ca3af;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            background: #fff;
-            box-shadow: 0 0 0 2px #6366f1;
-        }
-
-        /* Password Wrapper for the "Show" button */
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .show-toggle {
-            position: absolute;
-            right: 16px;
-            font-size: 13px;
-            color: #4b5563;
-            cursor: pointer;
-            font-weight: 500;
-            user-select: none;
-        }
-
-        /* The Primary Blue Button */
-        button {
-            width: 100%;
-            padding: 16px;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s ease;
-        }
-
-        button:hover {
-            background: #4338ca;
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .login-footer a {
-            color: #4f46e5;
-            text-decoration: none;
-            font-weight: 600;
+            background-color: #f4f6f9;
         }
     </style>
 </head>
-<body>
+<body class="d-flex align-items-center justify-content-center min-vh-100 py-5">
 
-<div class="register-card">
-    <h2>Register</h2>
-
-    <form th:action="@{/register}" method="post" th:object="${user}">
-
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" th:field="*{firstName}" placeholder="first name" required>
-            <input type="text" th:field="*{middleName}" placeholder="middle name" required>
-            <input type="text" th:field="*{lastName}" placeholder="last name" required>
-
+<div class="card shadow-lg border-0 rounded-4 p-4" style="width: 500px; max-width: 100%;">
+    <div class="card-body">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-primary">Register</h2>
+            <p class="text-muted">Create your Campus Connect account</p>
         </div>
 
-        <div class="form-group">
-            <label>Role</label>
-            <select th:field="*{role}" required>
-                <option value="">Choose Role</option>
-                <option value="ROLE_ADMIN">Admin</option>
-                <option value="ROLE_TEACHER">Teacher</option>
-                <option value="ROLE_STUDENT">Student</option>
-                <option value="ROLE_OTHER">Others</option>
-            </select>
+        <div th:if="${error}" class="alert alert-danger rounded-3 py-2 text-center" role="alert" th:text="${error}">
+            An error occurred
         </div>
 
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" th:field="*{email}" placeholder="Email" required>
-        </div>
-
-        <div class="form-group">
-            <label>Password</label>
-            <div class="password-wrapper">
-                <input type="password" th:field="*{password}" id="pass1"
-                       placeholder="Enter password"
-                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
-                       required>
-                <span class="show-toggle" onclick="togglePass('pass1')">Show</span>
+        <form th:action="@{/register}" method="post" th:object="${user}">
+            <div class="mb-3">
+                <label for="fullName" class="form-label text-muted small fw-semibold">Full Name *</label>
+                <input type="text" class="form-control rounded-3" id="fullName" th:field="*{fullName}" placeholder="e.g. Lalit Chaudhari" required>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label>Confirm Password</label>
-            <div class="password-wrapper">
-                <input type="password" name="confirmPassword" id="pass2"
-                       placeholder="Retype password" required>
-                <span class="show-toggle" onclick="togglePass('pass2')">Show</span>
+            <div class="mb-3">
+                <label for="role" class="form-label text-muted small fw-semibold">Role *</label>
+                <select class="form-select rounded-3" id="role" th:field="*{role}" onchange="toggleRoleFields()" required>
+                    <option value="">Choose Role</option>
+                    <option value="ROLE_HOD">HOD</option>
+                    <option value="ROLE_TEACHER">Teacher</option>
+                    <option value="ROLE_STUDENT">Student</option>
+                </select>
             </div>
+
+            <!-- Mandatory Department Field -->
+            <div class="mb-3">
+                <label for="department" class="form-label text-muted small fw-semibold">Department *</label>
+                <select class="form-select rounded-3" id="department" th:field="*{department}" required>
+                    <option value="">Select Department</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Artificial Intelligence">Artificial Intelligence</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Management">Management</option>
+                </select>
+            </div>
+
+            <!-- Mandatory Phone Field -->
+            <div class="mb-3">
+                <label for="phone" class="form-label text-muted small fw-semibold">Mobile Number *</label>
+                <input type="text" class="form-control rounded-3" id="phone" th:field="*{phone}" placeholder="e.g. 9876543210" required>
+            </div>
+
+            <!-- Student specific fields -->
+            <div id="studentFields" class="d-none">
+                <div class="mb-3">
+                    <label for="course" class="form-label text-muted small fw-semibold">Course *</label>
+                    <input type="text" class="form-control rounded-3" id="course" th:field="*{course}" placeholder="e.g. MSc IMCA">
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label for="year" class="form-label text-muted small fw-semibold">Year</label>
+                        <input type="text" class="form-control rounded-3" id="year" th:field="*{year}" placeholder="e.g. FY, SY, TY, LY">
+                    </div>
+                    <div class="col-6">
+                        <label for="division" class="form-label text-muted small fw-semibold">Division</label>
+                        <input type="text" class="form-control rounded-3" id="division" th:field="*{division}" placeholder="e.g. A, B">
+                    </div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label for="rollNumber" class="form-label text-muted small fw-semibold">Roll Number</label>
+                        <input type="text" class="form-control rounded-3" id="rollNumber" th:field="*{rollNumber}" placeholder="e.g. 102">
+                    </div>
+                    <div class="col-6">
+                        <label for="semester" class="form-label text-muted small fw-semibold">Semester</label>
+                        <input type="text" class="form-control rounded-3" id="semester" th:field="*{semester}" placeholder="e.g. V">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="academicYear" class="form-label text-muted small fw-semibold">Academic Year</label>
+                    <input type="text" class="form-control rounded-3" id="academicYear" th:field="*{academicYear}" placeholder="e.g. 2026-27">
+                </div>
+            </div>
+
+            <!-- Teacher/HOD specific fields -->
+            <div id="employeeFields" class="d-none">
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label for="employeeId" class="form-label text-muted small fw-semibold">Employee ID</label>
+                        <input type="text" class="form-control rounded-3" id="employeeId" th:field="*{employeeId}" placeholder="e.g. EMP102">
+                    </div>
+                    <div class="col-6">
+                        <label for="designation" class="form-label text-muted small fw-semibold">Designation</label>
+                        <input type="text" class="form-control rounded-3" id="designation" th:field="*{designation}" placeholder="e.g. Assistant Professor">
+                    </div>
+                </div>
+                <div id="subjectField" class="mb-3 d-none">
+                    <label for="subject" class="form-label text-muted small fw-semibold">Assigned Subject</label>
+                    <input type="text" class="form-control rounded-3" id="subject" th:field="*{subject}" placeholder="e.g. Artificial Intelligence">
+                </div>
+                <div id="experienceField" class="mb-3 d-none">
+                    <label for="experience" class="form-label text-muted small fw-semibold">Experience (Years)</label>
+                    <input type="number" class="form-control rounded-3" id="experience" th:field="*{experience}" placeholder="e.g. 5">
+                </div>
+            </div>
+
+            <!-- HOD Selection Field for Teachers and Students -->
+            <div id="hodField" class="mb-3 d-none">
+                <label for="hodId" class="form-label text-muted small fw-semibold">Select HOD *</label>
+                <select class="form-select rounded-3" id="hodId" name="hodId">
+                    <option value="">Select HOD</option>
+                    <option th:each="hod : ${hods}" th:value="${hod.id}" th:text="${hod.displayName}"></option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label text-muted small fw-semibold">Email Address *</label>
+                <input type="email" class="form-control rounded-3" id="email" th:field="*{email}" placeholder="email@campus.edu" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="pass1" class="form-label text-muted small fw-semibold">Password *</label>
+                <div class="input-group">
+                    <input type="password" class="form-control rounded-start-3" id="pass1" th:field="*{password}" placeholder="Enter password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$" required>
+                    <button class="btn btn-outline-secondary rounded-end-3" type="button" onclick="togglePass('pass1')"><i class="bi bi-eye"></i></button>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="pass2" class="form-label text-muted small fw-semibold">Confirm Password *</label>
+                <div class="input-group">
+                    <input type="password" class="form-control rounded-start-3" id="pass2" name="confirmPassword" placeholder="Retype password" required>
+                    <button class="btn btn-outline-secondary rounded-end-3" type="button" onclick="togglePass('pass2')"><i class="bi bi-eye"></i></button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3">Register</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <p class="text-muted small mb-0">Already have an account? <a th:href="@{/login}" class="text-primary fw-bold text-decoration-none">Login</a></p>
         </div>
-
-        <button type="submit">Register</button>
-    </form>
-
-    <div class="login-footer">
-        Already have an account? <a th:href="@{/login}">Login</a>
     </div>
 </div>
 
 <script>
+    function toggleRoleFields() {
+        const role = document.getElementById("role").value;
+        const studentFields = document.getElementById("studentFields");
+        const employeeFields = document.getElementById("employeeFields");
+        const experienceField = document.getElementById("experienceField");
+        const subjectField = document.getElementById("subjectField");
+        const hodField = document.getElementById("hodField");
+        const hodSelect = document.getElementById("hodId");
+
+        // Reset
+        studentFields.classList.add("d-none");
+        employeeFields.classList.add("d-none");
+        experienceField.classList.add("d-none");
+        subjectField.classList.add("d-none");
+        hodField.classList.add("d-none");
+        hodSelect.removeAttribute("required");
+
+        if (role === "ROLE_STUDENT") {
+            studentFields.classList.remove("d-none");
+            hodField.classList.remove("d-none");
+            hodSelect.setAttribute("required", "required");
+        } else if (role === "ROLE_TEACHER") {
+            employeeFields.classList.remove("d-none");
+            experienceField.classList.remove("d-none");
+            subjectField.classList.remove("d-none");
+            hodField.classList.remove("d-none");
+            hodSelect.setAttribute("required", "required");
+        } else if (role === "ROLE_HOD") {
+            employeeFields.classList.remove("d-none");
+        }
+    }
+
     function togglePass(id) {
         const input = document.getElementById(id);
-        const toggle = event.target;
+        const btn = event.currentTarget;
+        const icon = btn.querySelector('i');
         if (input.type === "password") {
             input.type = "text";
-            toggle.textContent = "Hide";
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
         } else {
             input.type = "password";
-            toggle.textContent = "Show";
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
         }
     }
 </script>
-
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
