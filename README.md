@@ -1,4 +1,4 @@
-# Complaint Management System
+# Campus Connect System
 
 A full-stack Java Spring Boot web application designed for managing, tracking, and resolving user complaints. 
 
